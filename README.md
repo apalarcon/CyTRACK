@@ -120,9 +120,9 @@ cytrack.get_cytrack_inputs_template()
 
 
 # Input data
-CyTRACK can read and directly process input data from ERA5 and WRF-ARW model by typying source="ERA5" or source= "WRF" in the input file. Note that ERA5 input data must be downloaded with longitudes in 0-360 format. For other case of ERA5 data o other sources, please set source="CUSTOM". 
+CyTRACK can read and directly process input data from ERA5 and WRF-ARW model by typying source="ERA5" or source= "WRF" in the input file. Note that ERA5 input data must be downloaded with longitudes in 0-360 format. For other case of ERA5 data or other sources, please set source="CUSTOM". 
 
-CyTRACK is configure for tracking tropical cyclones (TC), extratropical cyclones (EC), Mediterranean Cyclones (MC), subtropical cyclones (SC) and tropical-like-cyclones (TLC)
+CyTRACK is configured for tracking tropical cyclones (TC), extratropical cyclones (EC), Mediterranean Cyclones (MC), subtropical cyclones (SC) and tropical-like-cyclones (TLC)
 
 <b>* Revise CyTRACK help for more details</b>
 
@@ -153,7 +153,7 @@ mpirun -n N_proc python run_CyTRACK.py  -pf input_file
   ```
 #!/bin/bash -l
 
-#SBATCH --mem=512GB
+#SBATCH --mem=64GB
 #SBATCH -N 1
 #SBATCH -n 40
 #SBATCH -t 7-00:00:00
