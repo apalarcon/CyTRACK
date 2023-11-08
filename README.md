@@ -36,7 +36,7 @@ and
 
 or
 
-  *  python 3 and the required modules on a cluster
+  *  [![python](https://img.shields.io/badge/Python-3-3776AB.svg?style=flat&logo=python&logoColor=white)](https://www.python.org) and the required modules on a cluster
 
 ## The packages required to run CyTRACK are:
   
