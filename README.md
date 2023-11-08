@@ -72,6 +72,9 @@ or
 - os
 - matplotlib
 - imp
+- xarray
+- sklearn
+- argparse
 ```
 # Installation
 
