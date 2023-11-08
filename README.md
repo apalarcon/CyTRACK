@@ -98,23 +98,33 @@ cp -r cytrack path_to_anaconda_installation/lib/python3.x/site-packages/
 3 - run install_CyTRACK.sh.
 
 # CyTRACK namelist file configuration
-```
-===========================================================================================================
-                                        - OPEN CONFIGURATION FILE -
-===========================================================================================================
-hfjg
-===========================================================================================================
-                                        - CLOSE CONFIGURATION FILE -
-===========================================================================================================
-```
-Please note that you can get CyTRACK input parameters template running python run_CyTRACK.py -gt t (see below)
 
-
+* For details and help on CyTRACK input file, type
+```
+python run_CyTRACK.py -cth t
+```
+or configure your code as follows:
+```
+import cytrack
+cytrack.help()
+```
+Please note that you can get CyTRACK input parameters template by running:
+```
+python run_CyTRACK.py -gt t
+```
+or
+```
+import cytrack
+cytrack.get_cytrack_inputs_template()
+```
 
 
 # Input data
+CyTRACK can read and directly process input data from ERA5 and WRF-ARW model by typying source="ERA5" or source= "WRF" in the input file. Note that ERA5 input data must be downloaded with longitudes in 0-360 format. For other case of ERA5 data o other sources, please set source="CUSTOM". 
 
+CyTRACK is configure for tracking tropical cyclones (TC), extratropical cyclones (EC), Mediterranean Cyclones (MC), subtropical cyclones (SC) and tropical-like-cyclones (TLC)
 
+<b>* Revise CyTRACK help for more details</b>
 
 # CyTRACK outputs
 A text-format file similar to the HURDAT2 dataset suported by the U.S. National Hurricane Centre
@@ -161,15 +171,6 @@ srun -n $SLURM_NTASKS  --mpi=pmi2 python run_CyTRACK.py -pf input_file
 ```
 sbatch run_CyTRACK.sh
 ```
-
-* For help
-```
-python run_CyTRACK.py -cth t
-```
- * For getting input paramters template
-```
-python run_CyTRACK.py -gt t
-``` 
 
 
 # Contact and Support
