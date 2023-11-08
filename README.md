@@ -86,7 +86,7 @@ https://github.com/apalarcon/CyTRACK.git
 
 3 - Copy the cytrack directory to your Anaconda instalation
 ```
-cp -r lattin path_to_anaconda_installation/lib/python3.x/site-packages/
+cp -r cytrack path_to_anaconda_installation/lib/python3.x/site-packages/
 ````
 
 ### Second Method
@@ -107,7 +107,7 @@ hfjg
                                         - CLOSE CONFIGURATION FILE -
 ===========================================================================================================
 ```
-Please note that we provide
+Please note that you can get CyTRACK input parameters template running python run_CyTRACK.py -gt t (see below)
 
 
 
@@ -122,6 +122,8 @@ A text-format file similar to the HURDAT2 dataset suported by the U.S. National 
 
 # Running CyTRACK
 
+To run CyTRACK, we recomend the using of run_CyTRACK.py script
+
 * On Linux PC
   
 1 - By using run_CyTRACK.py
@@ -133,13 +135,6 @@ python run_CyTRACK.py -pf input_file
 mpirun -n N_proc python run_CyTRACK.py  -pf input_file
 ```
 
-2 - You can import lattin package in your code
-```
-import lattin as lt
-
-lt.lattin_main(input_file)
-
-```
 
 * On a HPC with Linux:
 
@@ -166,6 +161,15 @@ srun -n $SLURM_NTASKS  --mpi=pmi2 python run_CyTRACK.py -pf input_file
 ```
 sbatch run_CyTRACK.sh
 ```
+
+* For help
+```
+python run_CyTRACK.py -cth t
+```
+ * For getting input paramters template
+```
+python run_CyTRACK.py -gt t
+``` 
 
 
 # Contact and Support
