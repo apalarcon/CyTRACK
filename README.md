@@ -188,7 +188,8 @@ or
 # LICENSE
 Copyright 2023 Albenis Pérez-Alarcón, Patricia Coll-Hidalgo, Ricardo M. Trigo, Raquel Nieto and Luis Gimeno
 
-This software is published under the GPLv3 license. This means: 
+
+This software is published under the [![License: GPLv3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) license. This means: 
 1. Anyone can copy, modify and distribute this software. 
 2. You have to include the license and copyright notice with each and every distribution.
 3. You can use this software privately.
