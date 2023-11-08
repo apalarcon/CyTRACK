@@ -32,7 +32,7 @@ It is an open-source, comprehensive and user-friendly Python toolbox for detecti
 </thead>
 <tbody>
 <tr>
-<td>Python3</td>
+<td>[![python](https://img.shields.io/badge/Python-3.9-3776AB.svg?style=flat&logo=python&logoColor=white)](https://www.python.org)</td>
 <td> tested</td>
 </tr>
 </tbody>
