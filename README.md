@@ -27,7 +27,7 @@ It is an open-source, comprehensive and user-friendly Python toolbox for detecti
 
 ## To run CyTRACK, you need
 
-   * [python 3](https://img.shields.io/badge/Python-3-3776AB.svg)
+   * [![python](https://img.shields.io/badge/Python-3-3776AB.svg?style=flat&logo=python&logoColor=white)](https://www.python.org)
    * git
 
 and
