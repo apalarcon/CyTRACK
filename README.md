@@ -80,7 +80,7 @@ or
   ```
 https://github.com/apalarcon/CyTRACK.git
   ```
-2 - Verify you have installed all packages requiered for CyTRACK. If you use an Anaconda environment, please be sure you have activate the environment
+2 - Verify you have installed all packages requiered for CyTRACK. If you use an Anaconda environment, please be sure you have activated the environment
 
 3 - Copy the cytrack directory to your Anaconda instalation
 ```
@@ -91,7 +91,7 @@ cp -r cytrack path_to_anaconda_installation/lib/python3.x/site-packages/
 
 1 - Clone CyTRACK repository.
 
-2 - Verify you have installed all packages requiered for CyTRACK. If you use an Anaconda environment, please be sure you have activate the environment.
+2 - Verify you have installed all packages requiered for CyTRACK. If you use an Anaconda environment, please be sure you have activated the environment.
 
 3 - run install_CyTRACK.sh.
 
@@ -106,7 +106,7 @@ or configure your code as follows:
 import cytrack
 cytrack.help()
 ```
-Please note that you can get CyTRACK input parameters template by running:
+You can get CyTRACK input file template by running:
 ```
 python run_CyTRACK.py -gt t
 ```
@@ -125,8 +125,20 @@ CyTRACK is configured for tracking tropical cyclones (TC), extratropical cyclone
 <b>* Revise CyTRACK help for more details</b>
 
 # CyTRACK outputs
-A text-format file similar to the HURDAT2 dataset suported by the U.S. National Hurricane Centre
-
+A text-format file similar to the HURDAT2 dataset (<a href="https://doi.org/10.1175/MWR-D-12-00254.1" target="blank"> Landsea and Franklin (2013) </a>) suported by the U.S. National Hurricane Center (NHC)
+```
+AL0132017, 63,
+ Date,   hour,   latc,   lonc,    Pc,       Vmax,    Size,      ROCI,      Size,     Core,  VTL   VTU    B
+20170916, 06,   11.25,  -48.50,  1010.11,  52.68,   393.692,   1010.81,   339.477,   SLCC,  30,  -52,  3.0,
+20170916, 12,   11.50,  -50.50,  1009.89,  49.47,   317.813,   1013.35,   434.489,   SLCC,  47,  -13,  3.0,
+20170916, 18,   11.50,  -51.75,  1006.07,  56.79,   382.220,   1008.11,   192.095,   UDCC,  51,    0,  1.0,
+20170917, 00,   12.25,  -53.25,  1007.04,  55.48,   351.333,   1010.95,   282.036,   SDWC,  54,   14,  0.0,
+20170917, 06,   12.75,  -54.75,  1004.82,  61.51,   329.537,   1010.82,   515.375,   SDWC,  50,    4,  0.0,
+20170917, 12,   13.00,  -56.25,  1004.13,  60.83,   410.666,   1012.79,   513.898,   SDWC,  42,   59,  0.0,
+20170917, 18,   13.25,  -57.00,  1002.24,  43.33,   386.218,   1010.15,   470.297,   SDWC,  47,   54, -5.0,
+20170918, 00,   14.25,  -58.00,  1001.37,  48.35,   409.628,   1011.21,   458.576,   SDWC,  39,   67, -2.0,
+```
+See Pérez-Alarcón et al. (2023) for further details on CyTRACK output file
 
 # Running CyTRACK
 
@@ -197,3 +209,6 @@ This software is published under the GPLv3 license. This means:
 7. Any modifications of this code base MUST be distributed with the same license, GPLv3.
 8. This software is provided without warranty.
 9. The software author or license can not be held liable for any damages inflicted by the software.
+
+# References
+* Landsea, C. W., & Franklin, J. L. (2013). Atlantic hurricane database uncertainty and presentation of a new database format. Monthly Weather Review, 141(10), 3576-3592. https://doi.org/10.1175/MWR-D-12-00254.1
