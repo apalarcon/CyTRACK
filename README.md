@@ -23,7 +23,7 @@ It is an open-source, comprehensive and user-friendly Python toolbox for detecti
 
 [![License: GPLv3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-![GitHub manifest version (path)](https://img.shields.io/github/manifest-json/v/:apalarcon/:CyTRACK)
+![GitHub manifest version (path)](https://img.shields.io/github/manifest-json/v/:apalarcon/:CyTRACK/VERSION)
 
 # What do I need to get and run CyTRACK?
 
