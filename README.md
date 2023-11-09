@@ -23,14 +23,14 @@ It is an open-source, comprehensive and user-friendly Python toolbox for detecti
 
 [![License: GPLv3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-[![Git: ](https://img.shields.io/badge/Git-you_like-blue)](https://www.gnu.org/licenses/gpl-3.0)
+
 
 # What do I need to get and run CyTRACK?
 
 ## To run CyTRACK, you need
 
    * [![python](https://img.shields.io/badge/Python-3-3776AB.svg?style=flat&logo=python&logoColor=white)](https://www.python.org)
-   * git
+   * [![Git: ](https://img.shields.io/badge/Git-:-blue)](https://git-scm.com/)
 
 and
 
