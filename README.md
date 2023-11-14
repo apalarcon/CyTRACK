@@ -61,7 +61,13 @@ or
 # Installation
 
 ### First Method
-  
+
+1 - Using conda
+```
+conda install -c apa_py cytrack
+```
+
+### Second Method
 1 - Clone CyTRACK repository
 
   ```
@@ -74,13 +80,14 @@ https://github.com/apalarcon/CyTRACK.git
 cp -r cytrack path_to_anaconda_installation/lib/python3.x/site-packages/
 ````
 
-### Second Method
+### Third Method
 
 1 - Clone CyTRACK repository.
 
 2 - Verify you have installed all packages requiered for CyTRACK. If you use an Anaconda environment, please be sure you have activated the environment.
 
 3 - run install_CyTRACK.sh.
+
 
 # CyTRACK namelist file configuration
 
