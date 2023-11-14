@@ -46,7 +46,6 @@ or
 - numpy 
 - scipy 
 - mpi4py
-- numpy 
 - time
 - datetime
 - functools
