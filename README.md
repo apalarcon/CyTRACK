@@ -64,7 +64,7 @@ or
 
 1 - Using conda
 ```
-conda install -c apa_py cytrack
+conda install -c tramo-ephyslab cytrack
 ```
 
 ### Second Method
