@@ -24,7 +24,6 @@ It is an open-source, comprehensive and user-friendly Python toolbox for detecti
 [![License: GPLv3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 
-[![Anaconda-Server Badge](https://anaconda.org/tramo-ephyslab/lattin/badges/version.svg)](https://anaconda.org/tramo-ephyslab/lattin)
 
 # What do I need to get and run CyTRACK?
 
