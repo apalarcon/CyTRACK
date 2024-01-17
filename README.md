@@ -192,8 +192,6 @@ or
 
 
 # LICENSE
-Copyright 2024 Albenis Pérez-Alarcón, Patricia Coll-Hidalgo, Ricardo M. Trigo, Raquel Nieto and Luis Gimeno
-
 
 This software is published under the license. This means: 
 1. Anyone can copy, modify and distribute this software. 
