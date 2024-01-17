@@ -192,7 +192,7 @@ or
 
 
 # LICENSE
-Copyright 2023 Albenis Pérez-Alarcón, Patricia Coll-Hidalgo, Ricardo M. Trigo, Raquel Nieto and Luis Gimeno
+Copyright 2024 Albenis Pérez-Alarcón, Patricia Coll-Hidalgo, Ricardo M. Trigo, Raquel Nieto and Luis Gimeno
 
 
 This software is published under the license. This means: 
