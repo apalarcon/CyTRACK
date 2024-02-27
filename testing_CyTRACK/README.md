@@ -23,3 +23,5 @@ cd  CyTRACK/testing_CyTRACK
 sh testing_CyTRACK.sh
 ```
 ### Notes
+1 - The example run is for the case of Hurricane Irma in the North Atlantic basin from 28 August to 12 September 2017.
+2 - The input data is from the ERA5 reanalysis. CyTRACK will automatically download the required ERA5 input data. Therefore, be sure you have installed and correctly configured the python CDS API (cdsapi) for data downloading.
