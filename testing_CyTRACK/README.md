@@ -5,10 +5,21 @@
 
 OR
 
-1 - Manually run the testing example on your local PC. 
+1 - After install CyTRACK, manually run the testing example on your local PC. 
 
-1.1 1 - Clone the CyTRACK repository.
+* Clone the CyTRACK repository.
 
+ ```
+https://github.com/apalarcon/CyTRACK.git
   ```
-https://github.com/apalarcon/LATTIN.git
-  ```
+
+* Go to CyTRACK/testing_CyTRACK directory
+```
+cd  CyTRACK/testing_CyTRACK
+```
+* Run the testing_CyTRACK.sh script
+
+```
+sh testing_CyTRACK.sh
+```
+### Notes
