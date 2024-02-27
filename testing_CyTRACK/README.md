@@ -34,5 +34,5 @@ sh testing_CyTRACK.sh
 ```
 python plotting_test_CyTRACK_outputs.py
 ```
-3 - Your should obtain the following map
+3 - You should obtain the following map
 
