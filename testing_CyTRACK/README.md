@@ -27,4 +27,4 @@ sh testing_CyTRACK.sh
 
 2 - The input data is from the ERA5 reanalysis. CyTRACK will automatically download the required ERA5 input data. Therefore, be sure you have installed and correctly configured the python CDS API (cdsapi) for data downloading (see <a href="https://cds.climate.copernicus.eu/api-how-to" target="blank"> How to use the CDS API - Climate Data Store - Copernicus </a>).
 ## Testing Results
-1 - If CyTRACK ran succesfully, CyTRACK_OUTPUTS/CyTRACK_output directory should be created. In this folder you should found the following file ``` CyTRACK_AL_2017082500-2017091500_ERA5_TC.dat ```, containing the information of the identified tropical cyclones 
+1 - If CyTRACK runs successfully, the CyTRACK_OUTPUTS/CyTRACK_output directory should be created. In this folder, you should find the following file ```CyTRACK_AL_2017082500-2017091500_ERA5_TC.dat```, containing the information on the identified tropical cyclones
