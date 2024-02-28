@@ -80,6 +80,13 @@ https://github.com/apalarcon/CyTRACK.git
 ```
 cp -r cytrack path_to_anaconda_installation/lib/python3.x/site-packages/
 ````
+To knnow the exactly path of your Anaconda installation (```patho_to_anaconda_installation/.../site-packages/```), you can follow these instructions:
+
+```
+$python
+>>  from distutils.sysconfig import get_python_lib
+>>> print(get_python_lib())
+```
 
 ### Third Method
 
