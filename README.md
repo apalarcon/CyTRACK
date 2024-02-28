@@ -122,7 +122,7 @@ CyTRACK is configured for tracking tropical cyclones (TC), extratropical cyclone
 # CyTRACK outputs
 It is a comma-delimited text format following a similar to the HURDAT2 dataset (<a href="https://doi.org/10.1175/MWR-D-12-00254.1" target="blank"> Landsea and Franklin (2013) </a>) suported by the U.S. National Hurricane Center (NHC)
 ```
-AL0132017, 63,
+CyAL0132017, 63,
  Date,   hour,   latc,   lonc,    Pc,       Vmax,    Size,     Proci,      ROCI,     Core,  VTL   VTU    B
 20170916, 06,   11.25,  -48.50,  1010.11,  52.68,   393.692,   1010.81,   339.477,   SLCC,  30,  -52,  3.0,
 20170916, 12,   11.50,  -50.50,  1009.89,  49.47,   317.813,   1013.35,   434.489,   SLCC,  47,  -13,  3.0,
