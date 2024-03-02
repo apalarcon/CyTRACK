@@ -85,7 +85,7 @@ To knnow the exactly path of your Anaconda installation (```patho_to_anaconda_in
 ```
 $python
 >>  from distutils.sysconfig import get_python_lib
->>> print(get_python_lib())
+>> print(get_python_lib())
 ```
 
 ### Third Method
