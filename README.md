@@ -72,7 +72,7 @@ conda install -c tramo-ephyslab cytrack
 1 - Clone CyTRACK repository
 
   ```
-https://github.com/apalarcon/CyTRACK.git
+git clone https://github.com/apalarcon/CyTRACK.git
   ```
 2 - Verify you have installed all packages requiered for CyTRACK. If you use an Anaconda environment, please be sure you have activated the environment
 
@@ -91,6 +91,10 @@ $python
 ### Third Method
 
 1 - Clone CyTRACK repository.
+
+ ```
+git clone https://github.com/apalarcon/CyTRACK.git
+  ```
 
 2 - Verify you have installed all packages requiered for CyTRACK. If you use an Anaconda environment, please be sure you have activated the environment.
 
