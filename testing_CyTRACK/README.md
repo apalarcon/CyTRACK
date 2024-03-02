@@ -36,3 +36,4 @@ python plotting_test_CyTRACK_outputs.py
 ```
 3 - You should obtain the following map. Red tracks are from CyTRACK  and black tracks from HURDAT2
 
+![plot](./images/CyTRACK_testing_tracks.png)
