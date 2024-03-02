@@ -10,7 +10,7 @@ OR
 * Clone the CyTRACK repository.
 
  ```
-https://github.com/apalarcon/CyTRACK.git
+git clone https://github.com/apalarcon/CyTRACK.git
   ```
 
 * Go to CyTRACK/testing_CyTRACK directory
