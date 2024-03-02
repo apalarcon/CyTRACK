@@ -17,6 +17,11 @@ git clone https://github.com/apalarcon/CyTRACK.git
 ```
 cd  CyTRACK/testing_CyTRACK
 ```
+* Create the directory ```data/ERA5_data```
+```
+mkdir -p data/ERA5_data
+```
+
 * Run the testing_CyTRACK.sh script
 
 ```
