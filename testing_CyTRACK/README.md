@@ -34,7 +34,7 @@ or
 ```
 sh testing_CyTRACK.sh
 ```
-### Important Notes
+### Important Note
 1 - The example run is for tracking tropical cyclones September 2018 in the North Atlantic basin. Note that several tropical cyclones occurred at the same time during this period. Therefore CyTRACK captured all of then. It is also important to remark that some tropical cyclones in the eastern Pacific Ocean can be also capture by CyTRACK.
 
 ## Testing Results
