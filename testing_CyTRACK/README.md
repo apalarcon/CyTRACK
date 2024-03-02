@@ -23,7 +23,7 @@ cd  CyTRACK/testing_CyTRACK
 sh testing_CyTRACK.sh
 ```
 ### Important Notes
-1 - The example run is for the dates of the Hurricane Irma in the North Atlantic basin from 28 August to 12 September 2017. Note that several tropical cyclones occurred at the same time during this period. Therefore CyTRACK captured all of then.
+1 - The example run is for tracking tropical cyclones September 2017 in the North Atlantic basin. Note that several tropical cyclones occurred at the same time during this period. Therefore CyTRACK captured all of then. It is also important to remark that some tropical cyclones in the eastern Pacific Ocean can be also capture by CyTRACK.
 
 2 - The input data is from the ERA5 reanalysis. CyTRACK will automatically download the required ERA5 input data. Therefore, be sure you have installed and correctly configured the python CDS API (cdsapi) for data downloading (see <a href="https://cds.climate.copernicus.eu/api-how-to" target="blank"> How to use the CDS API - Climate Data Store - Copernicus </a>).
 
