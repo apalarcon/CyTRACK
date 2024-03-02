@@ -23,16 +23,16 @@ cd  CyTRACK/testing_CyTRACK
 sh testing_CyTRACK.sh
 ```
 ### Important Notes
-1 - The example run is for tracking tropical cyclones September 2017 in the North Atlantic basin. Note that several tropical cyclones occurred at the same time during this period. Therefore CyTRACK captured all of then. It is also important to remark that some tropical cyclones in the eastern Pacific Ocean can be also capture by CyTRACK.
+1 - The example run is for tracking tropical cyclones September 2018 in the North Atlantic basin. Note that several tropical cyclones occurred at the same time during this period. Therefore CyTRACK captured all of then. It is also important to remark that some tropical cyclones in the eastern Pacific Ocean can be also capture by CyTRACK.
 
 2 - The input data is from the ERA5 reanalysis. CyTRACK will automatically download the required ERA5 input data. Therefore, be sure you have installed and correctly configured the python CDS API (cdsapi) for data downloading (see <a href="https://cds.climate.copernicus.eu/api-how-to" target="blank"> How to use the CDS API - Climate Data Store - Copernicus </a>).
 
 ## Testing Results
-1 - If CyTRACK runs successfully, the CyTRACK_OUTPUTS/CyTRACK_output directory should be created. In this directory, you should find the following file ```CyTRACK_AL_2017082500-2017091500_ERA5_TC.dat```, containing the information on the identified tropical cyclones.
+1 - If CyTRACK runs successfully, the CyTRACK_output directory should be created. In this directory, you should find the following file ```CyTRACK_output/CyTRACK_AL_2018090100-2018093018_ERA5_TC.dat```, containing the information on the identified tropical cyclones.
 
 2 - To plot the cyclones tracks, run the ```plotting_test_CyTRACK_outputs.py``` script.
 ```
 python plotting_test_CyTRACK_outputs.py
 ```
-3 - You should obtain the following map
+3 - You should obtain the following map. Red tracks are from CyTRACK  and black tracks from HURDAT2
 
