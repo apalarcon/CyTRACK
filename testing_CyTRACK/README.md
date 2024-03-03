@@ -40,7 +40,7 @@ sh testing_CyTRACK.sh
 ## Testing Results
 1 - If CyTRACK runs successfully, the CyTRACK_output directory should be created. In this directory, you should find the following file ```CyTRACK_output/CyTRACK_AL_2018090100-2018093018_ERA5_TC.dat```, containing the information on the identified tropical cyclones.
 
-2 - To plot the cyclones tracks, run the ```plotting_test_CyTRACK_outputs.py``` script.
+2 - To plot the cyclones tracks, run the ```plotting_test_CyTRACK_outputs.py``` script. As the North Atlantic is the target basin, this script removed for plotting cyclones that formed over the eastern Pacific Ocean.
 ```
 python plotting_test_CyTRACK_outputs.py
 ```
