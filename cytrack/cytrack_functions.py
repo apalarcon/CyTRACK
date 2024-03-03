@@ -139,7 +139,7 @@ def get_limits_by_region(search_region="",cyclone_type=""):
 		if search_region.upper()=="AL":
 			search_limits=[-110,0,10,55]
 		elif search_region.upper()=="EP":
-			search_limits=[180,0,270,50]
+			search_limits=[180,0,280,50]
 		elif search_region.upper()=="WP":
 			search_limits=[100,0,180,55]
 		elif search_region.upper()=="SP":
@@ -1265,136 +1265,6 @@ def get_mslp_anomaly(idir="./",
 	return mean_slp
 
 
-def tracker_EC(source="",
-		idir="./",
-		sourcefiles="",
-		pathoutput="./",
-		rout=2000,
-		verbose=True,
-		dates=[""],
-		hours=[""],
-		model_res=20,
-		search_limits=[None,None,None,None],
-		dr_res=100,
-		d_ang=10,
-		filter_center_threshold=1500,
-		critical_outer_radius=200,
-		tmpdir="."+program_name()+"_tmpdir/",
-		rank=0,
-		search_region="",
-		min_slp_threshold=1015,
-		terrain_filter=1000,
-		prev_days=14,
-		mslp_anomaly_threshold=-3,
-		source_filename_prefix="",
-		source_file_date_format=""):
-
-	if source.upper()=="ERA5":
-		hgt_file=get_era5_hgtfile()
-		varhgt=get_era5_2dvar(idir="",erafile=hgt_file,svariables=["z"],search_limits=search_limits,search_region=search_region)
-		hgt_field=varhgt[2,:]/9.80665
-
-		varu="u10"
-		varv="v10"
-		varlat="latitude"
-		varlon="longitude"
-		dx,dy=compute_dx_dy(lons=varhgt[1,:],lats=varhgt[0,:])
-	elif source.upper()=="WRF":
-		hgtlat,hgtlon,hgt_field=get_wrf_hgt(idir=idir,wrffile=sourcefiles[0])
-
-		varu="U10"
-		varv="V10"
-		varlat="XLAT"
-		varlon="XLONG"
-
-		dx,dy=compute_dx_dy(lons=hgtlon,lats=hgtlat)
-
-	if terrain_filter>0:
-		hgt_field=hgt_field
-	elif terrain_filter==0:
-		hgt_field[:,:]=-1
-
-
-	for index in range(0,len(sourcefiles)):
-		fdate=dates[index]+hours[index]
-		if verbose:
-			print("   ---> | Processing "+source.upper()+ ": "+idir+"/"+sourcefiles[index])
-		if source.upper()=="ERA5":
-			varlist=get_era5_2dvar(idir=idir,erafile=sourcefiles[index],svariables=["msl"],search_limits=search_limits,search_region=search_region)
-			sourcelat=varlist[0,:]
-			sourcelon=varlist[1,:]
-			sourcemslp=varlist[2,:]/100
-		elif source.upper()=="WRF":
-			#sourcelat,sourcelon,sourcemslp=get_wrf_mslp(idir=idir,wrffile=sourcefiles[index],variables=["PSFC","T2","PHB","PH"])
-			sourcelat,sourcelon,sourcemslp=get_wrf_mslp_new(idir=idir,wrffile=sourcefiles[index],variables=["PB","P","PHB","PH","T","QVAPOR"])
-			
-
-
-
-			
-		avg_mslp=get_mslp_anomaly(idir=idir,
-						source=source,
-						search_limits=search_limits,
-						search_region=search_region,
-						prev_days=prev_days,
-						date=dates[index],
-						hour=hours[index],
-						source_filename_prefix=source_filename_prefix,
-						source_file_date_format=source_file_date_format)
-
-		mslp_anomaly=sourcemslp-avg_mslp
-
-		clats,clons,croci,cclosedp,cpmin=get_low_EC_centers(lats=sourcelat,
-						lons=sourcelon,
-						mslp=sourcemslp,
-						mslp_anomaly=mslp_anomaly,
-						mslp_anomaly_threshold=mslp_anomaly_threshold,
-						model_res=model_res,
-						search_limits=search_limits,
-						rout=rout,
-						dr_res=dr_res,
-						d_ang=d_ang,
-						critical_outer_radius=critical_outer_radius,
-						min_slp_threshold=min_slp_threshold,
-						terrain_filter=terrain_filter,
-						hgt_field=hgt_field)
-		
-		
-		
-		
-		flats, flons,froci,fpmin, fclosedp,fmws,fouter_r=filter_centers(lats=np.array(clats),
-								lons=np.array(clons),
-								roci=np.array(croci),
-								pmin=np.array(cpmin),
-								closedp=np.array(cclosedp),
-								filter_center_threshold=filter_center_threshold)
-
-
-		fwind_speed=get_wind_speed(latsc=flats,
-							lonsc=flons,
-							radius=froci,
-							wfile=sourcefiles[index],
-							idir=idir,
-							varu=varu,
-							varv=varv,
-							varlat=varlat,
-							varlon=varlon,
-							source=source.upper(),
-							search_limits=search_limits,
-							search_region=search_region,
-							r_uv=False)
-		
-		centers_data=np.empty((len(flats),8))
-		centers_data[:,0]=flats
-		centers_data[:,1]=flons
-		centers_data[:,2]=fpmin
-		centers_data[:,3]=fwind_speed
-		centers_data[:,4]=fclosedp
-		centers_data[:,5]= froci
-		centers_data[:,6]= 0
-		centers_data[:,7]=1
-		
-		np.savetxt(tmpdir+"/critical_centers_"+fdate+".dat",centers_data)
 		
 
 def get_era5_2dvar(idir="./",
@@ -1570,7 +1440,8 @@ def get_era5_3dvar(idir="./",
 			nevar[i,:]=auxvar
 	else:
 		nlon=np.copy(eralon)
-
+		nevar=np.copy(evar)
+		
 	if search_region.upper() in ("NA","SA","AL","MS"):
 		for i in range(0,len(nlon)):
 			if nlon[i]>=180:
@@ -1826,42 +1697,24 @@ def tracker_cyclones(cyclone_type="",
 		custom_terrain_high_filename="",
 		custom_terrain_high_var_name=""):
 
-	if source.upper()=="ERA5":
-		hgt_file=get_era5_hgtfile()
-		varhgt=get_era5_2dvar(idir="",erafile=hgt_file,svariables=["z"],search_limits=search_limits,search_region=search_region)
-		hgt_field=varhgt[2,:]/9.80665
-
-		varu="u10"
-		varv="v10"
-		varlat="latitude"
-		varlon="longitude"
-
-		dx,dy=compute_dx_dy(lons=varhgt[1,:],lats=varhgt[0,:])
-
-
-	elif source.upper()=="WRF":
-		hgtlat,hgtlon,hgt_field=get_wrf_hgt(idir=idir,wrffile=sourcefiles[0])
-
-		varu="U10"
-		varv="V10"
-		varlat="XLAT"
-		varlon="XLONG"
-		dx,dy=compute_dx_dy(lons=hgtlon,lats=hgtlat)
-		
-	elif source.upper()=="CUSTOM":
-		hgt_field =get_cumstom_hgt_data(custom_terrain_high_filename, custom_terrain_high_var_name)
-		varu=custom_uwind_variable
-		varv=custom_vwind_variable
-		varlat=custom_latitude_var
-		varlon=custom_longitude_var
-		
-		
-		hgt_field=hgt_field/9.80665
-
+	
 	if terrain_filter>0:
-		hgt_field=hgt_field
-	elif terrain_filter==0:
-		hgt_field[:,:]=-1
+		if source.upper()=="ERA5":
+			hgt_file=get_era5_hgtfile()
+			varhgt=get_era5_2dvar(idir="",erafile=hgt_file,svariables=["z"],search_limits=search_limits,search_region=search_region)
+			hgt_field=varhgt[2,:]/9.80665
+
+			
+
+		elif source.upper()=="WRF":
+			hgtlat,hgtlon,hgt_field=get_wrf_hgt(idir=idir,wrffile=sourcefiles[0])
+
+						
+		elif source.upper()=="CUSTOM":
+			hgt_field =get_cumstom_hgt_data(custom_terrain_high_filename, custom_terrain_high_var_name)
+						
+			hgt_field=hgt_field/9.80665
+
 
 	for index in range(0,len(sourcefiles)):
 
@@ -1869,13 +1722,22 @@ def tracker_cyclones(cyclone_type="",
 		if verbose:
 			print("   ---> | Processing "+source.upper()+ ": "+idir+"/"+sourcefiles[index])
 		if source.upper()=="ERA5":
+			varu="u10"
+			varv="v10"
+			varlat="latitude"
+			varlon="longitude"
+			
 			varlist=get_era5_2dvar(idir=idir,erafile=sourcefiles[index],svariables=["msl"],search_limits=search_limits,search_region=search_region)
 			sourcelat=varlist[0,:]
 			sourcelon=varlist[1,:]
 			sourcemslp=varlist[2,:]/100
 
-
+			dx,dy=compute_dx_dy(lons=sourcelon,lats=sourcelat)
 		elif source.upper()=="CUSTOM":
+			varu=custom_uwind_variable
+			varv=custom_vwind_variable
+			varlat=custom_latitude_var
+			varlon=custom_longitude_var
 			varlist=get_custom_2dvar(idir=idir,customfile=sourcefiles[index],svariables=[custom_mslp_variable],search_limits=search_limits,search_region=search_region, custom_latitude_var=custom_latitude_var, custom_longitude_var=custom_longitude_var)
 			sourcelat=varlist[0,:]
 			sourcelon=varlist[1,:]
@@ -1888,8 +1750,17 @@ def tracker_cyclones(cyclone_type="",
 			
 
 		elif source.upper()=="WRF":
+			varu="U10"
+			varv="V10"
+			varlat="XLAT"
+			varlon="XLONG"
+			
 			sourcelat,sourcelon,sourcemslp=get_wrf_mslp_new(idir=idir,wrffile=sourcefiles[index],variables=["PB","P","PHB","PH","T","QVAPOR"])
+			dx,dy=compute_dx_dy(lons=sourcelon,lats=sourcelat)
 
+		if terrain_filter<=0:
+			hgt_field=np.empty_like(sourcemslp)
+			hgt_field[:,:]=-1
 
 		if use_mslp_anomaly:	
 			avg_mslp=get_mslp_anomaly(idir=idir,
@@ -1943,40 +1814,7 @@ def tracker_cyclones(cyclone_type="",
 							great_circle_distance=great_circle_distance,
 							dmslp_great_circle_distance=dmslp_great_circle_distance,
 							radius_for_msw=radius_for_msw)
-		#elif cyclone_type.upper() in ("EC"):
-			#clats,clons,couter_r,cpmin,cmws,cclosedp,croci=get_low_EC_centers(lats=sourcelat,
-							#lons=sourcelon,
-							#mslp=sourcemslp,
-							#mslp_anomaly=mslp_anomaly,
-							#mslp_anomaly_threshold=mslp_anomaly_threshold,
-							#model_res=model_res,
-							#search_limits=search_limits,
-							#rout=rout,
-							#dr_res=dr_res,
-							#d_ang=d_ang,
-							#critical_outer_radius=critical_outer_radius,
-							#min_slp_threshold=min_slp_threshold,
-							#terrain_filter=terrain_filter,
-							#hgt_field=hgt_field,
-							#sourcefile=sourcefiles[index],
-							#idir=idir,
-							#varu=varu,
-							#varv=varv,
-							#varlat=varlat,
-							#varlon=varlon,
-							#source=source.upper(),
-							#search_region=search_region,
-							#max_wind_speed_threshold=max_wind_speed_threshold,
-							#outer_wind_speed_threshold=outer_wind_speed_threshold,
-							#dx=dx,
-							#dy=dy,
-							#vorticity_threshold=vorticity_threshold,
-							#filter_center_threshold=filter_center_threshold,
-							#great_circle_distance=great_circle_distance,
-							#dmslp_great_circle_distance=dmslp_great_circle_distance,
-							#radius_for_msw=radius_for_msw)
-
-
+		
 		flats, flons,froci,fpmin,fclosedp,fmws,fouter_r=filter_centers(lats=np.array(clats),
 								lons=np.array(clons),
 								roci=np.array(croci),
@@ -2691,12 +2529,34 @@ def get_low_centers(lats=np.array([None]),
 
 	rel_vort=calc_relvort(u=u, v=v, lon=lons, lat=lats)
 	
+	aux_sgn=np.copy(lats)
 	
-	if search_region in ("SA","SH","SI","SP"):
-		rel_vort=rel_vort*(-1)
+	aux_sgn[aux_sgn>=0]=1
+	aux_sgn[aux_sgn<0]=-1
+	
+
+	rel_vort=rel_vort*aux_sgn
+	
+	
+	#if search_region in ("SA","SH","SI","SP"):
+		#rel_vort=rel_vort*(-1)
+	#elif search_region=="GL":
+		#for i in range(0, lats.shape[0]):
+			#for j in range(0,lats.shape[1]):
+				#if lats[i,j]<0:
+					#rel_vort[i,j]=rel_vort[i,j]*(-1)
+					
+					
+	
 	
 	
 	minlats, minlons, minmslp, minmslp_anoms, minterrain, minrelvort =get_maxmin_mslp_points(lats=lats, lons=lons,  mslp=mslp, mslp_anomaly=mslp_anomaly, hgt_field=hgt_field, rel_vort=rel_vort, extrema="min", nsize=25)
+	
+	
+
+	
+
+	
 	
 	bulk_amslp=np.copy(minmslp)
 	
@@ -2705,11 +2565,24 @@ def get_low_centers(lats=np.array([None]),
 		bulk_amslp[minmslp_anoms>mslp_anomaly_threshold]=np.nan
 	if terrain_filter>0:
 		bulk_amslp[minterrain>terrain_filter]=np.nan
+	
+	
+	if search_limits[0]> 180 or search_limits[2]>180:
+		minlons_=[]
+		for i in range(0, len(minlons)):
+			if minlons[i]<0:
+				minlons_=np.append(minlons_, minlons[i]+360)
+			else:
+				minlons_=np.append(minlons_, minlons[i])
+	else:
+		minlons_=np.copy(minlons)
+	
+	
 	bulk_amslp[minrelvort<vorticity_threshold]=np.nan
 	bulk_amslp[minlats>search_limits[3]]=np.nan
 	bulk_amslp[minlats<search_limits[1]]=np.nan
-	bulk_amslp[minlons>search_limits[2]]=np.nan
-	bulk_amslp[minlons<search_limits[0]]=np.nan
+	bulk_amslp[minlons_>search_limits[2]]=np.nan
+	bulk_amslp[minlons_<search_limits[0]]=np.nan
 	
 	
 	
@@ -3692,7 +3565,6 @@ def get_VTU_VTL_B_series(cenlats=np.array([None]),
 									full=False
 									 )
 		
-
 			Zvar[idx,:,:,:]=sourceZ
 			
 				
@@ -3806,7 +3678,6 @@ def get_VTU_VTL_B_series(cenlats=np.array([None]),
 			)
 	#plot_VTL(dates, hours, VTL[:-1], Bhart,path="./", fname="VTL-B", dpi=600)
 	#plot_VTU(dates, hours, VTL[:-1], VTU[:-1], Bhart, path="./", fname="VTU-VTL", dpi=600)
-	
 	
 	return VTU, VTL, Bhart
 

@@ -352,41 +352,7 @@ def get_cytrack_main(pathfile=""):
 			custom_terrain_high_var_name=custom_terrain_high_var_name,
 			)
 
-	#if cyclone_type.upper()=="MC":
-		#tracker_MC(source=source,
-			#idir=path_data_source,
-			#sourcefiles=nproc_input_files,
-			#pathoutput=pathoutput,
-			#rout=rout,
-			#verbose=verbose,
-			#dates=nproc_dates,
-			#hours=nproc_hours,
-			#model_res=model_res,
-			#search_limits=search_limits,
-			#dr_res=dr_res,
-			#d_ang=d_ang,
-			#filter_center_threshold=filter_center_threshold,
-			#critical_outer_radius=critical_outer_radius,
-			#tmpdir=tmpdir,rank=rank,
-			#search_region=search_region,
-			#min_slp_threshold=min_slp_threshold,
-			#terrain_filter=terrain_filter,
-			#prev_days=prev_days,
-			#mslp_anomaly_threshold=mslp_anomaly_threshold,
-			#source_filename_prefix=source_prefix,
-			#source_file_date_format=era_date_file_name,
-			#max_wind_speed_threshold=max_wind_speed_threshold,
-			#outer_wind_speed_threshold=outer_wind_speed_threshold,
-			#vorticity_threshold=vorticity_threshold,
-			#great_circle_distance=great_circle_distance,
-			#dmslp_great_circle_distance=dmslp_great_circle_distance,
-			#radius_for_msw=radius_for_msw)
-
-
-
-
-
-	comm.barrier()
+		comm.barrier()
 	if rank==0:
 		if verbose:
 
