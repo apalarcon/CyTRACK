@@ -34,7 +34,7 @@ It is an open-source, comprehensive and user-friendly Python toolbox for detecti
 
 and
 
-  *  [![Git: ](https://img.shields.io/badge/Anaconda--blue)](https://www.anaconda.com/) (or similar to manage python packages)
+ * [![Anaconda 3](https://img.shields.io/badge/Anaconda-3-green.svg)](https://www.anaconda.com/) (or similar to manage python packages)
 
 or
 
