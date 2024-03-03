@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pylab as plt
 import sys
-import alarconpy as al
 import os
 from shapely.geometry import Polygon, MultiPolygon, Point 
 import requests
