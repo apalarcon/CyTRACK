@@ -100,6 +100,22 @@ git clone https://github.com/apalarcon/CyTRACK.git
 
 3 - run install_CyTRACK.sh.
 
+### NOTE
+If you have a problem with the mpi4py library, try these steps:
+
+* Remove the ```mpi4py``` library ```conda remove mpi4py```
+* Install the ```openmpi``` library ```conda install conda-forge::openmpi ```
+* Install again the ```mpi4py``` library ```conda install mpi4py ```
+
+If the problem continue (the problem is frequently related with the ```libmpi.so.12 ``` or similar), you can also try
+* Search the mising library on your system and link it to your Anaconda lib path.
+  ```
+  ln -s path_to_missing_library/libmpi.so.12 patho_to_anaconda_installation/lib/
+  ```
+or 
+
+* Contact your system administrator
+
 
 # CyTRACK namelist file configuration
 
