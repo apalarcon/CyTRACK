@@ -189,7 +189,7 @@ sbatch run_CyTRACK.sh
 ```
 
 # Testing CyTRACK
-Please, follow the intructions in
+Please, follow the intructions at
 
 [![Git: Testing_CyTRACK ](https://img.shields.io/badge/GitHub-Testing_CyTRACK-blue)](https://github.com/apalarcon/CyTRACK/tree/main/testing_CyTRACK)
 
