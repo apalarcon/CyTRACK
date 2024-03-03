@@ -23,7 +23,7 @@ mkdir -p data/ERA5_data
 ```
 * The input data is from the ERA5 reanalysis.
   
--- You can download the input data from Zenodo and copy it into ```data/ERA5_data```
+-- You can download the input data from [![Zenodo: 10.5281/zenodo.10767422](https://img.shields.io/badge/Zenodo-10.5281/zenodo.10767422-blue)](https://doi.org/10.5281/zenodo.10767422) and copy it into ```data/ERA5_data```
 
 or
 
