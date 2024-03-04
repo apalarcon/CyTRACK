@@ -37,7 +37,7 @@ or
 sh testing_CyTRACK.sh
 ```
 ### Important Note
-1 - The example is for tracking tropical cyclones in September 2018 in the North Atlantic basin. It is also important to remark that some tropical cyclones in the eastern Pacific Ocean can be also capture by CyTRACK.
+1 - The example is for tracking tropical cyclones in September 2018 in the North Atlantic basin. It is also important to remark that some tropical cyclones in the eastern Pacific Ocean can be captured by CyTRACK.
 
 ## Testing Results
 1 - If CyTRACK runs successfully, the CyTRACK_output directory should be created. In this directory, you should find the following file ```CyTRACK_output/CyTRACK_AL_2018090100-2018093018_ERA5_TC.dat```, containing the information on the identified tropical cyclones.
