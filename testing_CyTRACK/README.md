@@ -15,7 +15,7 @@ OR
 git clone https://github.com/apalarcon/CyTRACK.git
   ```
 
-* Go to CyTRACK/testing_CyTRACK directory
+* Go to ```CyTRACK/testing_CyTRACK``` directory
 ```
 cd  CyTRACK/testing_CyTRACK
 ```
@@ -29,9 +29,9 @@ mkdir -p data/ERA5_data
 
 or
 
--- CyTRACK will automatically download the required ERA5 input data. Therefore, be sure you have installed and correctly configured the python CDS API (cdsapi) for data downloading (see <a href="https://cds.climate.copernicus.eu/api-how-to" target="blank"> How to use the CDS API - Climate Data Store - Copernicus </a>).
+-- CyTRACK will automatically download the required ERA5 input data. Therefore, be sure you have installed and correctly configured the python CDS API (```cdsapi```) for data downloading (see <a href="https://cds.climate.copernicus.eu/api-how-to" target="blank"> How to use the CDS API - Climate Data Store - Copernicus </a>).
 
-* Run the testing_CyTRACK.sh script
+* Run the ```testing_CyTRACK.sh``` script
 
 ```
 sh testing_CyTRACK.sh
