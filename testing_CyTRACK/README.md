@@ -3,6 +3,8 @@
 
 1 - You can check the reproducible CyTRACK capsule in Code Ocean
 
+[![Code Ocean: 10.24433/CO.9578727.v1](https://img.shields.io/badge/CodeOcean-10.24433/CO.9578727.v1-blue)](https://doi.org/10.24433/CO.9578727.v1)
+
 OR
 
 1 - After install CyTRACK, manually run the testing example on your local PC. 
