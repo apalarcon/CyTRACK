@@ -207,6 +207,8 @@ sbatch run_CyTRACK.sh
 # Testing CyTRACK
 Please, follow the intructions at
 
+[![Code Ocean: 10.24433/CO.9578727.v1](https://img.shields.io/badge/CodeOcean-10.24433/CO.9578727.v1-blue)](https://doi.org/10.24433/CO.9578727.v1)
+
 [![Git: Testing_CyTRACK ](https://img.shields.io/badge/GitHub-Testing_CyTRACK-blue)](https://github.com/apalarcon/CyTRACK/tree/main/testing_CyTRACK)
 
 
