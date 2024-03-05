@@ -227,7 +227,7 @@ or
 
 # LICENSE
 
-This software is published under the license GPLv3. This means: 
+This software is published under the GPLv3 license. This means: 
 1. Anyone can copy, modify and distribute this software. 
 2. You have to include the license and copyright notice with each and every distribution.
 3. You can use this software privately.
