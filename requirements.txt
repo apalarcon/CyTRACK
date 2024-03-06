@@ -2,7 +2,7 @@ functools
 netcdf4
 numpy 
 scipy
-mpi4py-mpich
+mpi4py
 datetime
 matplotlib
 xarray
