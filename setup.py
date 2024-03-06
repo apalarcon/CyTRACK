@@ -34,7 +34,7 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.6',
-    install_requires=["numpy","mpi4py","datetime","netCDF4","scipy","functools","imp", "matplotlib", "sys", 'os', "fnmatch","math",  "xarray","sklearn","argparse"],
+    install_requires=["numpy","mpi4py","time","datetime","netCDF4","scipy","functools","imp", "matplotlib", "sys", 'os', "fnmatch","math",  "xarray","sklearn","argparse"],
 
     
     include_package_data=True,
