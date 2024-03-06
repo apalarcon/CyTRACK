@@ -1,0 +1,11 @@
+netcdf4
+numpy 
+scipy
+openmpi
+mpi4py
+datetime
+functools
+matplotlib
+xarray
+scikit-learn
+argparse
