@@ -1,9 +1,0 @@
-netcdf4
-numpy 
-scipy
-mpi4py
-datetime
-matplotlib
-xarray
-scikit-learn
-argparse
