@@ -1,9 +1,9 @@
+functools
 netcdf4
 numpy 
 scipy
 mpi4py
 datetime
-functools
 matplotlib
 xarray
 scikit-learn
