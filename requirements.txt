@@ -4,7 +4,6 @@ scipy
 mpi4py
 datetime
 functools
-math 
 sys
 os
 matplotlib
