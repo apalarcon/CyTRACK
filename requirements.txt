@@ -2,7 +2,6 @@ netcdf4
 numpy 
 scipy
 mpi4py
-time
 datetime
 functools
 math 
