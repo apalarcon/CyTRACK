@@ -19,7 +19,6 @@ setuptools.setup(
     name="cytrack",
     version=version_,
     distclass=conda_build.bdist_conda.CondaDistribution,
-    conda_buildnum=1,
     developer="Albenis Pérez-Alarcón",
     CoDevelopers="Patricia Coll-Hidalgo, Ricardo M. Trigo, Raquel Nieto, and Luis Gimeno ",
     author_email="albenis.pérez.alarcon@uvigo.es",
