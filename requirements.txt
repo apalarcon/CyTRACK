@@ -4,10 +4,7 @@ scipy
 mpi4py
 datetime
 functools
-sys
-os
 matplotlib
-imp
 xarray
 sklearn
 argparse
