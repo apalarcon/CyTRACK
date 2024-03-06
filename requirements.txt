@@ -6,5 +6,5 @@ datetime
 functools
 matplotlib
 xarray
-sklearn
+scikit-learn
 argparse
