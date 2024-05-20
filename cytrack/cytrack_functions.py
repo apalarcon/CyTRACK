@@ -726,8 +726,8 @@ def help():
 	print("     (NI): North Indian Ocean")
 	print("     (EP): Central and East Pacific Ocean")
 	print("     (WP): South Indian Ocean")
-	print("  NH (NH): North Hemisphere")
-	print("  SH (SH): North Hemisphere")
+	print("  NH (NH): Northern Hemisphere")
+	print("  SH (SH): Southern Hemisphere")
 	print("  GL (GL): Global")
 	print("** Note: In the current version of " + program_name()+ " ("+str(get_currentversion())+")" + " it has been only tested for some (NA, MS, SA) regions\n" )
 	
