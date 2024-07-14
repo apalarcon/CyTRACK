@@ -23,7 +23,7 @@ CyTRACK is an open-source, comprehensive and user-friendly Python toolbox for de
 
 [![License: GPLv3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
- [![Current Version: ](https://img.shields.io/badge/Current_Version-1.0.1-blue)](https://anaconda.org/tramo-ephyslab/lattin)
+ [![Current Version: ](https://img.shields.io/badge/Current_Version-1.0.2-blue)](https://anaconda.org/tramo-ephyslab/lattin)
 
 If you use CyTRACK, please cite it as follows:
 
