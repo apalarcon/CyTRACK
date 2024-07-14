@@ -183,9 +183,14 @@ def get_cytrack_main(pathfile=""):
 	#hours=hours[i_bg:]
 	
 	#sys.exit()
+	
+	runID=program_name()+"_"+source+"_"+cyclone_type.upper()
+	
+	
 	checking_optimum_nproc(rank=rank, n_proc=mpisize, length_files=len(dates[i_bg:]))
 	if rank==0 and verbose:
 		print("\nTracking " + cyclone_type.upper()+"s over " + search_region +" region using the " + source  +" meteorological fields")
+		print("RunID: ", runID)
 		print(program_name() +" is running using "+ str(int(mpisize)) + " CPUs")
 
 		print_dafault_values(cyclone_type=cyclone_type,
@@ -261,16 +266,17 @@ def get_cytrack_main(pathfile=""):
 	if rank==0 and verbose:
 		
 		print("\nChecking input files")
-		for i in range(0,len(input_files)):
-			checkfiles= checking_input_files(pathfile=path_data_source, source_file=input_files[i],source=source,date=dates[i],hour=hours[i],flev="sfc")
-		if source.upper()=="ERA5" and checking_upper_levels_parameters==True:
-			upperdates=dates[i_bg::]
-			upperhours=hours[i_bg::]
-			for i in range(0,len(input_files_upper)):
-				checkfiles_upper= checking_input_files(pathfile=path_data_source_upper, source_file=input_files_upper[i],source=source,date=upperdates[i],hour=upperhours[i],flev="upper")
-		else:
-			checkfiles_upper=True
+	for i in range(0,len(input_files)):
+		checkfiles= checking_input_files(pathfile=path_data_source, source_file=input_files[i],source=source,date=dates[i],hour=hours[i],flev="sfc", rank=rank)
+	if  checking_upper_levels_parameters==True:
+		upperdates=dates[i_bg::]
+		upperhours=hours[i_bg::]
+		for i in range(0,len(input_files_upper)):
+			checkfiles_upper= checking_input_files(pathfile=path_data_source_upper, source_file=input_files_upper[i],source=source,date=upperdates[i],hour=upperhours[i],flev="upper", rank=rank)
+	else:
+		checkfiles_upper=True
 
+	if rank==0 and verbose:
 		if checkfiles:
 			print("    ---> | Surface Files : PASSED")
 		if checkfiles_upper==True and checking_upper_levels_parameters==True:
@@ -340,6 +346,8 @@ def get_cytrack_main(pathfile=""):
 			radius_for_msw=radius_for_msw,
 			sourcefilesupper=nproc_input_files_upper,
 			checking_upper_levels_parameters=checking_upper_levels_parameters,
+			vtl_vtu_lr=vtl_vtu_lr,
+			max_dist=max_dist,
 			idir_upper=path_data_source_upper,
 			plotting_maps=plotting_maps,
 			use_mslp_anomaly=use_mslp_anomaly,
@@ -350,13 +358,18 @@ def get_cytrack_main(pathfile=""):
 			custom_vwind_variable=custom_vwind_variable,
 			custom_terrain_high_filename=custom_terrain_high_filename,
 			custom_terrain_high_var_name=custom_terrain_high_var_name,
+			era_date_file_name=era_date_file_name,
+			custom_geopotential_var_name=custom_geopotential_var_name,
+			custom_upper_level_variable_name=custom_upper_level_variable_name,
+			custom_date_file_name=custom_date_file_name,
+			source_upperprefix=source_upperprefix,
 			)
 
 		comm.barrier()
 	if rank==0:
 		if verbose:
 
-			print("\n\nLinking " + cyclone_type.upper() +" critical centers to contruct the full trajectory")
+			print("\n\nLinking critical centers to contruct " +  cyclone_type.upper()+" trajectories")
 		sys_id=paring_centers(cyclone_type=cyclone_type,
 				dates=dates,
 				hours=hours,
@@ -384,7 +397,7 @@ def get_cytrack_main(pathfile=""):
 				custom_upper_level_variable_name=custom_upper_level_variable_name,
 				custom_varlat=custom_latitude_var,
 				custom_varlon=custom_longitude_var,
-				custom_date_file_name=custom_date_file_name
+				custom_date_file_name=custom_date_file_name,
 				) 
 				
 		if verbose:
@@ -392,6 +405,9 @@ def get_cytrack_main(pathfile=""):
 			print("---------------------------------------------------------------------------------------")
 
 	time.sleep(1)
+	if rank==0:
+		os.system("rm -r "+tmpdir+"/*.npy")
+
 	if rank==0 and remove_tmp_dir:
 		os.system("rm -r "+tmpdir)
 

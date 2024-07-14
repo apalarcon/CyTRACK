@@ -726,8 +726,8 @@ def help():
 	print("     (NI): North Indian Ocean")
 	print("     (EP): Central and East Pacific Ocean")
 	print("     (WP): South Indian Ocean")
-	print("  NH (NH): Northern Hemisphere")
-	print("  SH (SH): Southern Hemisphere")
+	print("  NH (NH): North Hemisphere")
+	print("  SH (SH): North Hemisphere")
 	print("  GL (GL): Global")
 	print("** Note: In the current version of " + program_name()+ " ("+str(get_currentversion())+")" + " it has been only tested for some (NA, MS, SA) regions\n" )
 	
@@ -1155,27 +1155,31 @@ def get_wrf_files(dates=[""],hours=[""], wrfprefix="d01"):
 		wrfiles=np.append(wrfiles,fname)
 	return wrfiles
 
-def checking_input_files(pathfile, source_file, source,date,hour,flev='sfc'):
+def checking_input_files(pathfile, source_file, source,date,hour,flev='sfc', rank=0):
 	if os.path.exists(pathfile+"/"+source_file):
 		pass
 	elif source.upper()=="WRF":
-		print_error_message( pathfile+"/"+source_file+ " is not in the directory")
-	
+		if rank==0:
+			print_error_message( pathfile+"/"+source_file+ " is not in the directory")
+		raise SystemExit()
 	elif source.upper()=="ERA5":
-		print("--------------------------------------------------------------------------------------")
-		print ("WARNING: ERA5 file: ", pathfile+"/"+source_file, " not found")
-		print ("Trying to download it from " + source.upper() + " reanalysis")
-		print("--------------------------------------------------------------------------------------")
-		path=pathfile
-		year=date[0:4].zfill(4)
-		month=date[4:6].zfill(2)
-		day=date[6:8].zfill(2)
-		if flev=="sfc":
-			download_era5(erafile=pathfile+"/"+source_file,year=year,month=month,day=day,hour=hour)
-		elif flev=="upper":
-			download_era5_upper(erafile_upper=pathfile+"/"+source_file,year=year,month=month,day=day,hour=hour)
+		if rank==0:
+			print("--------------------------------------------------------------------------------------")
+			print ("WARNING: ERA5 file: ", pathfile+"/"+source_file, " not found")
+			print ("Trying to download it from " + source.upper() + " reanalysis")
+			print("--------------------------------------------------------------------------------------")
+			path=pathfile
+			year=date[0:4].zfill(4)
+			month=date[4:6].zfill(2)
+			day=date[6:8].zfill(2)
+			if flev=="sfc":
+				download_era5(erafile=pathfile+"/"+source_file,year=year,month=month,day=day,hour=hour)
+			elif flev=="upper":
+				download_era5_upper(erafile_upper=pathfile+"/"+source_file,year=year,month=month,day=day,hour=hour)
 	elif source.upper()=="CUSTOM":
-		print_error_message( pathfile+"/"+source_file+ " is not in the directory")
+		if rank==0:
+			print_error_message( pathfile+"/"+source_file+ " is not in the directory")
+		raise SystemExit()
 	return True
 
 def get_wrf_hgt(idir="",wrffile=""):
@@ -1396,7 +1400,8 @@ def get_era5_3dvar(idir="./",
 		search_limits=[None,None,None,None],
 		search_region="",
 		fdate="",
-		full=False
+		full=False,
+		dims=False
 		):
 	
 	ncera=Dataset(idir+"/"+erafile)
@@ -1453,6 +1458,9 @@ def get_era5_3dvar(idir="./",
 
 	nera_lat,nera_lon, sevar= era_subregion(lat=eralat,lon=nlon,var=nevar[0,:],search_limits=search_limits)
 
+	if dims:
+		return len(levels), sevar.shape[0],sevar.shape[1]
+
 	sub_evar=np.empty((len(levels),sevar.shape[0],sevar.shape[1]))
 	sub_evar[:,:,:]=0
 
@@ -1503,7 +1511,7 @@ def get_custom_3dvar(idir="./",
 		lonn,latt=np.meshgrid(eralon,eralat_)
 	
 	
-	#if search_region.upper() in ("NA","SA","AL","MS"):
+
 	for i in range(0,lonn.shape[0]):
 		for j in range(0,lonn.shape[1]):
 			if lonn[i,j]>=180:
@@ -1514,41 +1522,9 @@ def get_custom_3dvar(idir="./",
 	
 	if len(evar.shape)>3:
 		evar=evar[0,:]
-	#nevar=np.empty_like(evar)
-	#nevar[:,:,:]=0
-	#if search_region.upper() in ("NA","SA","AL","MS"):
-		#for i in range(0,evar.shape[0]):
-			#auxvar,nlon=convert_era5_matrix(evar[i,:],lonn[0,:],search_lon=180)
-			#nevar[i,:]=auxvar
-	#else:
-		#nlon=np.copy(lonn[0,:])
-
-	#if search_region.upper() in ("NA","SA","AL","MS"):
-		#for i in range(0,len(nlon)):
-			#if nlon[i]>=180:
-				#nlon[i]=nlon[i]-360
-
 	
-	#if len(nlon.shape):
-		#nlon,eralat=np.meshgrid(nlon,eralat_)
-
-	#nera_lat,nera_lon, sevar= era_subregion(lat=eralat,lon=nlon,var=nevar[0,:],search_limits=search_limits)
-
-	#sub_evar=np.empty((len(levels),evar.shape[0], evar.shape[1]))
-	#sub_evar[:,:,:]=0
-
-	#for index in range(0,evar.shape[0]):
-		#nera_lat,nera_lon, svar_aux = era_subregion(lat=eralat,lon=nlon,var=nevar[index,:],search_limits=search_limits)
-		#sub_evar[index,:]=svar_aux
-	
-	#if full:
 	return evar, latt, lonn, levels
-	#else:
-
-
-		#return sub_evar, nera_lat,nera_lon, levels
-
-
+	
 
 
 
@@ -1686,6 +1662,8 @@ def tracker_cyclones(cyclone_type="",
 		radius_for_msw=100,
 		sourcefilesupper=[None],
 		checking_upper_levels_parameters=False,
+		vtl_vtu_lr=False,
+		max_dist=500,
 		idir_upper="./",
 		plotting_maps=False,
 		use_mslp_anomaly=True,
@@ -1695,7 +1673,12 @@ def tracker_cyclones(cyclone_type="",
 		custom_uwind_variable="",
 		custom_vwind_variable="",
 		custom_terrain_high_filename="",
-		custom_terrain_high_var_name=""):
+		custom_terrain_high_var_name="",
+		era_date_file_name="",
+		custom_geopotential_var_name="",
+		custom_upper_level_variable_name="",
+		custom_date_file_name="",
+		source_upperprefix=""):
 
 	
 	if terrain_filter>0:
@@ -1815,7 +1798,7 @@ def tracker_cyclones(cyclone_type="",
 							dmslp_great_circle_distance=dmslp_great_circle_distance,
 							radius_for_msw=radius_for_msw)
 		
-		flats, flons,froci,fpmin,fclosedp,fmws,fouter_r=filter_centers(lats=np.array(clats),
+		flats, flons,froci,fpmin,fclosedp,fmws,fouter_r,centers_found=filter_centers(lats=np.array(clats),
 								lons=np.array(clons),
 								roci=np.array(croci),
 								pmin=np.array(cpmin),
@@ -1828,7 +1811,53 @@ def tracker_cyclones(cyclone_type="",
 
 
 
-		centers_data=np.empty((len(flats),8))
+		if checking_upper_levels_parameters==True and centers_found==True:
+			usourcelats,usourcelons, Zvar, source_levels,listlev1, listlev2 = get_CPS_data(dates=[dates[index]],
+																hours=[hours[index]],
+																idir_upper=idir_upper,
+																source_upperprefix=source_upperprefix,
+																source=source,
+																era_date_file_name=era_date_file_name,
+																search_limits=search_limits,
+																search_region=search_region,
+																vtl_vtu_lr=vtl_vtu_lr,
+																custom_geopotential_var_name=custom_geopotential_var_name,
+																custom_upper_level_variable_name=custom_upper_level_variable_name,
+																varlat=custom_latitude_var,
+																varlon=custom_longitude_var,
+																custom_date_file_name=custom_date_file_name
+																)
+
+			np.savetxt(tmpdir+"/sourcelats.dat", usourcelats)
+			np.savetxt(tmpdir+"/sourcelons.dat", usourcelons)
+			np.savetxt(tmpdir+"/source_levels.dat",source_levels)
+			np.save(tmpdir+"/source_upper_"+fdate+".npy",Zvar[0,:])
+
+
+			VTL, VTU = compute_VT_series(dates=[dates[index]],
+										hours=[hours[index]],
+										listlev1=listlev1,
+										listlev2=listlev2,
+										liste_lat=flats,
+										liste_lon=flons,
+										max_dist=max_dist,
+										lats=usourcelats,
+										lons=usourcelons,
+										levels=source_levels,
+										Zvar=Zvar[0,:],
+										vtl_vtu_lr=vtl_vtu_lr
+										)
+
+		else:
+
+			VTU=np.empty_like(flons)
+			VTU[:]=0
+
+			VTL=np.empty_like(flons)
+			VTL[:]-0
+
+
+		centers_data=np.empty((len(flats),10))
 		centers_data[:,0]=flats
 		centers_data[:,1]=flons
 		centers_data[:,2]=fpmin
@@ -1836,7 +1865,9 @@ def tracker_cyclones(cyclone_type="",
 		centers_data[:,4]=fclosedp
 		centers_data[:,5]=froci
 		centers_data[:,6]=fouter_r
-		centers_data[:,7]=1	
+		centers_data[:,7]=VTU
+		centers_data[:,8]=VTL
+		centers_data[:,9]=1
 		
 
 		if plotting_maps:
@@ -2191,6 +2222,7 @@ def filter_centers(lats=np.array(None),
 			lats[i]=np.nan
 			lons[i]=np.nan
 			dist=[]
+			centers_found=True
 	else:
 			flats=[0]
 			flons=[0]
@@ -2200,7 +2232,8 @@ def filter_centers(lats=np.array(None),
 			fmws=[0]
 			fouter_r=[0]
 			fctype=[0]
-	return flats, flons,froci,fpmin, fclosedp,fmws,fouter_r
+			centers_found=False
+	return flats, flons,froci,fpmin, fclosedp,fmws,fouter_r, centers_found
 
 
 
@@ -2557,155 +2590,157 @@ def get_low_centers(lats=np.array([None]),
 	
 
 	
+	#print(minmslp)
+	if len(minmslp)>=1:
 	
-	bulk_amslp=np.copy(minmslp)
-	
-	bulk_amslp[minmslp>min_slp_threshold]=np.nan
-	if use_mslp_anomaly:
-		bulk_amslp[minmslp_anoms>mslp_anomaly_threshold]=np.nan
-	if terrain_filter>0:
-		bulk_amslp[minterrain>terrain_filter]=np.nan
-	
-	
-	if search_limits[0]> 180 or search_limits[2]>180:
-		minlons_=[]
-		for i in range(0, len(minlons)):
-			if minlons[i]<0:
-				minlons_=np.append(minlons_, minlons[i]+360)
-			else:
-				minlons_=np.append(minlons_, minlons[i])
-	else:
-		minlons_=np.copy(minlons)
-	
-	
-	bulk_amslp[minrelvort<vorticity_threshold]=np.nan
-	bulk_amslp[minlats>search_limits[3]]=np.nan
-	bulk_amslp[minlats<search_limits[1]]=np.nan
-	bulk_amslp[minlons_>search_limits[2]]=np.nan
-	bulk_amslp[minlons_<search_limits[0]]=np.nan
-	
-	
-	
-	nnmslp=minmslp[np.isfinite(bulk_amslp)]
-	nnlats=minlats[np.isfinite(bulk_amslp)]
-	nnlons=minlons[np.isfinite(bulk_amslp)]
-	
-	
-	
-	#bulk_amslp=np.copy(mslp_anomaly)
-	
-	#bulk_amslp[bulk_amslp>mslp_anomaly_threshold]=np.nan
-	#bulk_amslp[mslp>min_slp_threshold]=np.nan
-	#if terrain_filter>0:
-	#	bulk_amslp[hgt_field>terrain_filter]=np.nan
-	#bulk_amslp[rel_vort<vorticity_threshold]=np.nan
-	#bulk_amslp[lats>search_limits[3]]=np.nan
-	#bulk_amslp[lats<search_limits[1]]=np.nan
-	#bulk_amslp[lons>search_limits[2]]=np.nan
-	#bulk_amslp[lons<search_limits[0]]=np.nan
-	
+		bulk_amslp=np.copy(minmslp)
+		
+		bulk_amslp[minmslp>min_slp_threshold]=np.nan
+		if use_mslp_anomaly:
+			bulk_amslp[minmslp_anoms>mslp_anomaly_threshold]=np.nan
+		if terrain_filter>0:
+			bulk_amslp[minterrain>terrain_filter]=np.nan
+		
+		
+		if search_limits[0]> 180 or search_limits[2]>180:
+			minlons_=[]
+			for i in range(0, len(minlons)):
+				if minlons[i]<0:
+					minlons_=np.append(minlons_, minlons[i]+360)
+				else:
+					minlons_=np.append(minlons_, minlons[i])
+		else:
+			minlons_=np.copy(minlons)
+		
+		
+		bulk_amslp[minrelvort<vorticity_threshold]=np.nan
+		bulk_amslp[minlats>search_limits[3]]=np.nan
+		bulk_amslp[minlats<search_limits[1]]=np.nan
+		bulk_amslp[minlons_>search_limits[2]]=np.nan
+		bulk_amslp[minlons_<search_limits[0]]=np.nan
+		
+		
+		
+		nnmslp=minmslp[np.isfinite(bulk_amslp)]
+		nnlats=minlats[np.isfinite(bulk_amslp)]
+		nnlons=minlons[np.isfinite(bulk_amslp)]
+		
+		
+		
+		#bulk_amslp=np.copy(mslp_anomaly)
+		
+		#bulk_amslp[bulk_amslp>mslp_anomaly_threshold]=np.nan
+		#bulk_amslp[mslp>min_slp_threshold]=np.nan
+		#if terrain_filter>0:
+		#	bulk_amslp[hgt_field>terrain_filter]=np.nan
+		#bulk_amslp[rel_vort<vorticity_threshold]=np.nan
+		#bulk_amslp[lats>search_limits[3]]=np.nan
+		#bulk_amslp[lats<search_limits[1]]=np.nan
+		#bulk_amslp[lons>search_limits[2]]=np.nan
+		#bulk_amslp[lons<search_limits[0]]=np.nan
+		
 
 
-	#nnmslp=mslp[np.isfinite(bulk_amslp)]
-	#nnlats=lats[np.isfinite(bulk_amslp)]
-	#nnlons=lons[np.isfinite(bulk_amslp)]
-	
-	
-	nnroci=np.empty_like(nnlats)
-	nnroci[:]=0
-	
-	nnclosedp=np.empty_like(nnlats)
-	nnclosedp[:]=0
+		#nnmslp=mslp[np.isfinite(bulk_amslp)]
+		#nnlats=lats[np.isfinite(bulk_amslp)]
+		#nnlons=lons[np.isfinite(bulk_amslp)]
+		
+		
+		nnroci=np.empty_like(nnlats)
+		nnroci[:]=0
+		
+		nnclosedp=np.empty_like(nnlats)
+		nnclosedp[:]=0
 
-	nnmws=np.empty_like(nnlats)
-	nnmws[:]=0
+		nnmws=np.empty_like(nnlats)
+		nnmws[:]=0
 
-	nncouter_r=np.empty_like(nnlats)
-	nncouter_r[:]=0
+		nncouter_r=np.empty_like(nnlats)
+		nncouter_r[:]=0
 
-	nlats, nlons,nroci,nmslp,nclosedp,nmws,nouter_r=filter_centers(lats=nnlats,
-									lons=nnlons,
-									roci=nnroci,
-									pmin=nnmslp,
-									closedp=nnclosedp,
-									ff=nnmws,
-									outer_r=nncouter_r,
-									filter_center_threshold=filter_center_threshold)
+		nlats, nlons,nroci,nmslp,nclosedp,nmws,nouter_r,centers_found=filter_centers(lats=nnlats,
+										lons=nnlons,
+										roci=nnroci,
+										pmin=nnmslp,
+										closedp=nnclosedp,
+										ff=nnmws,
+										outer_r=nncouter_r,
+										filter_center_threshold=filter_center_threshold)
 
-	for i in range(0, len(nmslp)):
-		dmslp,nlatc, nlonc, npmin=compute_dmslp(latc=nlats[i],
-							lonc=nlons[i],
+		for i in range(0, len(nmslp)):
+			dmslp,nlatc, nlonc, npmin=compute_dmslp(latc=nlats[i],
+								lonc=nlons[i],
+								lats=lats,
+								lons=lons,
+								mslp=mslp,
+								pmin=nmslp[i],
+								dang=d_ang,
+								dradius=model_res,
+								search_radius=great_circle_distance+100,
+								model_res=model_res,
+								great_circle_distance=great_circle_distance,
+								filter_center_threshold=.45*filter_center_threshold,
+								search_limits=search_limits)
+
+			
+			if dmslp*100 - npmin*100 >= dmslp_great_circle_distance:
+				
+				fwind_speed=get_wind_speed(latsc=[nlatc],
+						lonsc=[nlonc],
+						radius=[radius_for_msw],
+						wfile=sourcefile,
+						idir=idir,
+						varu=varu,
+						varv=varv,
+						varlat=varlat,
+						varlon=varlon,
+						source=source.upper(),
+						search_limits=search_limits,
+						search_region=search_region,
+						r_uv=False)
+
+
+				if fwind_speed[0] >= max_wind_speed_threshold:
+					
+					outer_size=compute_TC_size(latc=nlatc,
+							lonc=nlonc,
 							lats=lats,
 							lons=lons,
-							mslp=mslp,
-							pmin=nmslp[i],
+							u=u,
+							v=v,
+							dradius=dr_res,
 							dang=d_ang,
-							dradius=model_res,
-							search_radius=great_circle_distance+100,
+							search_radius=rout,
 							model_res=model_res,
-							great_circle_distance=great_circle_distance,
-							filter_center_threshold=.45*filter_center_threshold,
-							search_limits=search_limits)
+							outer_wind_speed_threshold=outer_wind_speed_threshold,
+							)
 
-		
-		if dmslp*100 - npmin*100 >= dmslp_great_circle_distance:
-			
-			fwind_speed=get_wind_speed(latsc=[nlatc],
-					lonsc=[nlonc],
-					radius=[radius_for_msw],
-					wfile=sourcefile,
-					idir=idir,
-					varu=varu,
-					varv=varv,
-					varlat=varlat,
-					varlon=varlon,
-					source=source.upper(),
-					search_limits=search_limits,
-					search_region=search_region,
-					r_uv=False)
-
-
-			if fwind_speed[0] >= max_wind_speed_threshold:
-				
-				outer_size=compute_TC_size(latc=nlatc,
+					roci,closedp=compute_roci_RU(latc=nlatc,
 						lonc=nlonc,
 						lats=lats,
 						lons=lons,
-						u=u,
-						v=v,
-						dradius=dr_res,
+						mslp=mslp,
+						pmin=npmin,
 						dang=d_ang,
+						dradius=dr_res,
 						search_radius=rout,
-						model_res=model_res,
-						outer_wind_speed_threshold=outer_wind_speed_threshold,
-						)
-
-				roci,closedp=compute_roci_RU(latc=nlatc,
-					lonc=nlonc,
-					lats=lats,
-					lons=lons,
-					mslp=mslp,
-					pmin=npmin,
-					dang=d_ang,
-					dradius=dr_res,
-					search_radius=rout,
-					model_res=model_res)
-			
-			
+						model_res=model_res)
 				
-				if np.isnan(roci):roci=0
-				if np.isnan(closedp):closedp=0
-			
-			
+				
+					
+					if np.isnan(roci):roci=0
+					if np.isnan(closedp):closedp=0
+				
+				
 
-				if roci>=critical_outer_radius or closedp>=0:
-					center_lats=np.append(center_lats,nlatc)
-					center_lons=np.append(center_lons,nlonc)
-					outer_r=np.append(outer_r,outer_size)
-					mcp=np.append(mcp,npmin)
-					mws=np.append(mws,fwind_speed[0])
-					outer_p=np.append(outer_p,closedp)
-					croci=np.append(croci,roci)
+					if roci>=critical_outer_radius or closedp>=0:
+						center_lats=np.append(center_lats,nlatc)
+						center_lons=np.append(center_lons,nlonc)
+						outer_r=np.append(outer_r,outer_size)
+						mcp=np.append(mcp,npmin)
+						mws=np.append(mws,fwind_speed[0])
+						outer_p=np.append(outer_p,closedp)
+						croci=np.append(croci,roci)
 
 
 	return center_lats,center_lons,outer_r,mcp,mws,outer_p,croci
@@ -2743,23 +2778,6 @@ def get_GCD(lon1, lat1, lonc, latc):
 
 	return gcd
 
-
-#def get_cyclone_phase(VTU=[None],VTL=[None],B=[None]):
-	
-	#cyclone_phase=[]
-	
-	#for i in range(0,len(VTU)-1):
-	
-		#if VTU[i]<0 and VTL[i]<0 :
-			#cyclone_phase=np.append(cyclone_phase,10)
-		#elif VTU[i]>0 and VTL[i]>0:
-			#cyclone_phase=np.append(cyclone_phase,20)
-		#elif VTU[i]<0 and VTL[i]>0:
-			#cyclone_phase=np.append(cyclone_phase,30)
-		#else:
-			#cyclone_phase=np.append(cyclone_phase,-99)
-		
-	#return cyclone_phase
 
 
 def get_cyclone_phase(VTU=[None],VTL=[None],B=[None]):
@@ -3089,9 +3107,12 @@ def compute_TC_size(latc=None,
 		radii=nradius[i,imax:]
 	
 		if nav.min()<=outer_wind_speed_threshold<=nav.max():
-			finterpolate = interpolate.interp1d(nav, radii)
-			radius_out=finterpolate(outer_wind_speed_threshold)
-			radial_i=np.append(radial_i,radius_out) 
+			try:
+				finterpolate = interpolate.interp1d(nav, radii)
+				radius_out=finterpolate(outer_wind_speed_threshold)
+				radial_i=np.append(radial_i,radius_out) 
+			except:
+				pass
 		elif nav[-1]>outer_wind_speed_threshold:
 			radial_i=np.append(radial_i,radii[-1])
 
@@ -3288,10 +3309,27 @@ def tmp_data_loadt(data_file):
 		
 	return data
 
-def get_bearing(lat1, lon1, lat2, lon2):
+def get_bearing_old(lat1, lon1, lat2, lon2):
 	dLon = (lon2 - lon1)
 	x = math.cos(math.radians(lat2)) * math.sin(math.radians(dLon))
 	y = math.cos(math.radians(lat1)) * math.sin(math.radians(lat2)) - math.sin(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.cos(math.radians(dLon))
+	brng = np.arctan2(x,y)
+	brng = np.degrees(brng)
+	brng = (brng +360) % 360
+	return brng
+
+
+def get_bearing(lat1, lon1, lat2, lon2):
+	lat1 = np.pi*lat1/180
+	lat2 = np.pi*lat2/180
+	
+	lon1 = np.pi*lon1/180
+	lon2 = np.pi*lon2/180
+	
+	dLon = (lon2 - lon1)
+	
+	x = np.cos(lat2) * np.sin(dLon)
+	y = np.cos(lat1) * np.sin(lat2) - np.sin(lat1) * np.cos(lat2) * np.cos(dLon)
 	brng = np.arctan2(x,y)
 	brng = np.degrees(brng)
 	brng = (brng +360) % 360
@@ -3312,24 +3350,21 @@ def compute_VT_series(dates=np.array([None]),
 					vtl_vtu_lr=False,
 					):
 	
-	listlev11=[n * 100 for n in listlev1]
-	lnP1=np.log(listlev11)
-	listlev22=[n * 100 for n in listlev2]
-	lnP2=np.log(listlev22)
 	
+	listlev11=np.array(listlev1)*100
+	lnP1=np.log(listlev11)
+	listlev22=np.array(listlev2)*100
+	lnP2=np.log(listlev22)
+
+
 	VTL_seriesb=[]
 	VTU_seriesb=[]
 	
 	VTL_series=[]
 	VTU_series=[]
 
-	for ix in range(0,lons.shape[0]):
-		for jx in range(0,lons.shape[1]):
-			if lons[ix,jx]>=180:
-				lons[ix,jx]=lons[ix,jx]-360
 
-
-	for i in range(0,len(dates)):
+	for i in range(0,len(liste_lat)):
 
 		clat = liste_lat[i]
 		clon = liste_lon[i]
@@ -3343,28 +3378,27 @@ def compute_VT_series(dates=np.array([None]),
 		deltaZ2=[]
 
 		distance=haversine(lons, lats, clon, clat)
-		for plev in listlev1:
+		for iplev in range(0,len(listlev1)):
 
-			ilev = list(levels).index(plev)
+			ilev = list(levels).index(listlev1[iplev])
 			
-			data_z1 = Zvar[i,ilev,:,:]
+			data_z1 = Zvar[ilev,:,:]
 			data_z1_m = np.ma.masked_where(distance > max_dist, data_z1)
 			zmin=np.min(data_z1_m)
 			zmax=np.max(data_z1_m)
 			delta_z1=zmax-zmin
 			deltaZ1.append(int(delta_z1))
 
-		for plev in listlev2:
+		#for plev in listlev2:
 
-			ilev = list(levels).index(plev)
-			data_z2 = Zvar[i,ilev,:,:]
+			ilev2 = list(levels).index(listlev2[iplev])
+			data_z2 = Zvar[ilev2,:,:]
 
 			data_z2_m = np.ma.masked_where(distance > max_dist, data_z2)
-			zmin=np.min(data_z2_m)
-			zmax=np.max(data_z2_m)
-			delta_z2=zmax-zmin
+			zmin2=np.min(data_z2_m)
+			zmax2=np.max(data_z2_m)
+			delta_z2=zmax2-zmin2
 			deltaZ2.append(int(delta_z2))
-
 
 		coef1b=(deltaZ1[-1]-deltaZ1[0])/(lnP1[-1]-lnP1[0])
 		VTL_seriesb.append(int(coef1b))
@@ -3390,7 +3424,7 @@ def compute_VT_series(dates=np.array([None]),
 		reg = LinearRegression().fit(X2, y2)
 		coef2=reg.coef_
 		VTU_series.append(int(coef2))
-		
+
 	if vtl_vtu_lr:
 		return VTL_series, VTU_series
 	else:
@@ -3408,10 +3442,10 @@ def compute_Bparameter_hart(cenlats=np.array([None]),
 			Zvar=np.array([None])
 			):
 
-	for ix in range(0,lons.shape[0]):
-		for jx in range(0,lons.shape[1]):
-			if lons[ix,jx]>=180:
-				lons[ix,jx]=lons[ix,jx]-360
+	#for ix in range(0,lons.shape[0]):
+	#	for jx in range(0,lons.shape[1]):
+	#		if lons[ix,jx]>=180:
+	#			lons[ix,jx]=lons[ix,jx]-360
 
 
 	ilev_top = list(levels).index(600)
@@ -3420,13 +3454,8 @@ def compute_Bparameter_hart(cenlats=np.array([None]),
 	B_series=[]
 	for i in range(0,len(cenlats)-1):
 		
-		for ix in range(0,lons.shape[0]):
-			for jx in range(0,lons.shape[1]):
-				if lons[ix,jx]>=180:
-					lons[ix,jx]=lons[ix,jx]-360
-		
-		ilev_top = list(levels).index(600)
-		ilev_bot = list(levels).index(900)
+		#ilev_top = list(levels).index(600)
+		#ilev_bot = list(levels).index(900)
 		
 		#thickness=zvar[ilev_top,:]-zvar[ilev_bot,:]
 		
@@ -3441,12 +3470,14 @@ def compute_Bparameter_hart(cenlats=np.array([None]),
 		if clon>=180:
 			clon=clon-360
 		
-		qq_ang_all=np.zeros([lons.shape[0],lons.shape[1]],dtype='f')
+		#qq_ang_all=np.zeros([lons.shape[0],lons.shape[1]],dtype='f')
 		
-		for x in range(0,lons.shape[0]):
-			for y in range(0,lons.shape[1]):
-				qq_ang_all[x,y]=get_bearing(clat, clon, lats[x,y], lons[x,y])
-				
+		#for x in range(0,lons.shape[0]):
+			#for y in range(0,lons.shape[1]):
+				#qq_ang_all[x,y]=get_bearing(clat, clon, lats[x,y], lons[x,y])
+		
+		qq_ang_all = np.array(get_bearing(clat, clon, lats, lons))
+		
 		distance=haversine(lons, lats, clon, clat)
 		ang=get_bearing(clat, clon, cenlats[i+1], cenlons[i+1])
 		Zl=np.zeros([lons.shape[0],lons.shape[1]],dtype='f')
@@ -3480,16 +3511,6 @@ def compute_Bparameter_hart(cenlats=np.array([None]),
 		Zr_m[Zr_m == 0] = np.nan
 		Zl_m[Zl_m == 0] = np.nan
 		
-		#Zr_m = Zr[distance<max_dist]
-		#Zl_m = Zl[distance<max_dist]
-
-		#Zr_m=Zr_m[Zr_m != 0]
-		#Zl_m=Zl_m[Zl_m != 0]
-
-		#Zr_mean=np.nanmean(Zr_m)
-		#Zl_mean=np.nanmean(Zl_m)
-		#B=Zr_mean-Zl_mean
-
 
 		Zr_m = xr.DataArray(Zr_m)
 		Zl_m = xr.DataArray(Zl_m)
@@ -3511,48 +3532,49 @@ def compute_Bparameter_hart(cenlats=np.array([None]),
 
 	return B_series
 
-def get_VTU_VTL_B_series(cenlats=np.array([None]),
-						cenlons=np.array([None]),
-						dates=np.array([None]),
-						hours=np.array([None]),
-						idir_upper="./",
-						source_upperprefix="",
-						source="",
-						era_date_file_name="",
-						search_limits=[None,None,None,None],
-						search_region="",
-						max_dist=500,
-						vtl_vtu_lr=False,
-						custom_geopotential_var_name="",
-						custom_upper_level_variable_name="",
-						varlat="",
-						varlon="",
-						custom_date_file_name=""
-						):
-	
+
+def get_CPS_data(dates=np.array([None]),
+				hours=np.array([None]),
+				idir_upper="./",
+				source_upperprefix="",
+				source="",
+				era_date_file_name="",
+				search_limits=[None,None,None,None],
+				search_region="",
+				vtl_vtu_lr=False,
+				custom_geopotential_var_name="",
+				custom_upper_level_variable_name="",
+				varlat="",
+				varlon="",
+				custom_date_file_name=""
+				):
+
 	if vtl_vtu_lr:
 		listlev1=[900,850,800,750,700,650,600]
 		listlev2=[600,550,500,450,400,350,300]
 	else:
 		listlev1=[900,600]
 		listlev2=[600,300]
-	
-	
+
+
+
 	if source.upper()=="ERA5":
+
 		upperfiles=get_era5_files(dates=dates,hours=hours,era_file_prefix=source_upperprefix,era_date_file_name=era_date_file_name)
 
-		sourceZ, sourcelats,sourcelons, source_levels=get_era5_3dvar(idir=idir_upper,
+		dimz, dimi,dimj=get_era5_3dvar(idir=idir_upper,
 							erafile=upperfiles[0],
 							svariable='z',
 							varlevel="level",
 							search_limits=search_limits,
 							search_region=search_region,
 							fdate=dates[0]+hours[0],
-							full=False
+							full=False,
+							dims=True
 							)
 
 
-		Zvar=np.empty((len(dates), sourceZ.shape[0], sourceZ.shape[1], sourceZ.shape[2]))
+		Zvar=np.empty((len(dates), dimz, dimi, dimj))
 		for idx in range(0, len(dates)):
 			fdate=dates[idx]+hours[idx]
 			sourceZ, sourcelats,sourcelons, source_levels=get_era5_3dvar(idir=idir_upper,
@@ -3564,10 +3586,9 @@ def get_VTU_VTL_B_series(cenlats=np.array([None]),
 									fdate=fdate,
 									full=False
 									 )
-		
+
 			Zvar[idx,:,:,:]=sourceZ
-			
-				
+
 		checklevs=[]
 		for plev in listlev1:
 			checklevs=np.append(checklevs,plev)
@@ -3578,10 +3599,10 @@ def get_VTU_VTL_B_series(cenlats=np.array([None]),
 			if not int(ulev) in source_levels:
 				if vtl_vtu_lr:
 					print_error_message(" Mandatory pressure level = " + str(int(ulev)) +" hPa is missing in input file.\nIf checking_upper_levels_parameters = True and vtl_vtu_lr=True, mandatory pressure levels are from 900 to 300 hPa every 50 hPa\nPlease change or remove your input files directory.\nCyTRACK will download upper levels input files for you, or set checking_upper_levels_parameters = False")
-				else:	
+				else:
 					print_error_message(" Mandatory pressure level = " + str(int(ulev)) +" hPa is missing in input file.\nIf checking_upper_levels_parameters = True, mandatory pressure levels are [900,600,300] hPa\nPlease change or remove your input files directory.\nCyTRACK will download upper levels input files for you, or set checking_upper_levels_parameters = False")
-							
-				
+
+
 	elif source.upper()=="WRF":
 		plevels=np.arange(1000,150,-50)
 		upperfiles=get_wrf_files(dates=dates,hours=hours,wrfprefix=source_upperprefix)
@@ -3589,7 +3610,7 @@ def get_VTU_VTL_B_series(cenlats=np.array([None]),
 																wrffile=upperfiles[0],
 																variables=["PH"],
 																plevels=plevels)
-	
+
 		Zvar=np.empty((len(dates), sourceZ.shape[0], sourceZ.shape[1], sourceZ.shape[2]))
 		for idx in range(0, len(dates)):
 			sourcelats,sourcelons,sourceZ, source_levels = get_wrf_uppervar(idir=idir_upper,
@@ -3597,10 +3618,10 @@ def get_VTU_VTL_B_series(cenlats=np.array([None]),
 																variables=["PH"],
 																plevels=plevels)
 			Zvar[idx,:,:,:]=sourceZ
-					
-		
+
+
 	elif  source.upper()=="CUSTOM":
-		
+
 		upperfiles=get_custom_files(dates=dates,hours=hours,custom_file_prefix=source_upperprefix,custom_date_file_name=custom_date_file_name)
 
 		sourceZ, sourcelats,sourcelons, source_levels=get_custom_3dvar(idir=idir_upper,
@@ -3630,11 +3651,11 @@ def get_VTU_VTL_B_series(cenlats=np.array([None]),
 									varlat=varlat,
 									varlon=varlon,
 									 )
-		
+
 
 			Zvar[idx,:,:,:]=sourceZ
-			
-				
+
+
 		checklevs=[]
 		for plev in listlev1:
 			checklevs=np.append(checklevs,plev)
@@ -3645,27 +3666,61 @@ def get_VTU_VTL_B_series(cenlats=np.array([None]),
 			if not int(ulev) in source_levels:
 				if vtl_vtu_lr:
 					print_error_message(" Mandatory pressure level = " + str(int(ulev)) +" hPa is missing in input file.\nIf checking_upper_levels_parameters = True and vtl_vtu_lr=True, mandatory pressure levels are from 900 to 300 hPa every 50 hPa\nPlease change or remove your input files directory.")
-				else:	
+				else:
 					print_error_message(" Mandatory pressure level = " + str(int(ulev)) +" hPa is missing in input file.\nIf checking_upper_levels_parameters = True, mandatory pressure levels are [900,600,300] hPa\nPlease change or remove your input files directory.")
-	
-	
-		
-		
-	
-	VTL, VTU = compute_VT_series(dates=dates,
-				hours=hours,
-				listlev1=listlev1,
-				listlev2=listlev2,
-				liste_lat=cenlats,
-				liste_lon=cenlons,
-				max_dist=max_dist,
-				lats=sourcelats,
-				lons=sourcelons,
-				levels=source_levels,
-				Zvar=Zvar,
-				vtl_vtu_lr=vtl_vtu_lr
-				)
-	
+
+	for ix in range(0,sourcelons.shape[0]):
+		for jx in range(0,sourcelons.shape[1]):
+			if sourcelons[ix,jx]>=180:
+				sourcelons[ix,jx]=sourcelons[ix,jx]-360
+
+
+	return sourcelats,sourcelons, Zvar, source_levels, listlev1, listlev2
+
+
+def get_B_series(cenlats=np.array([None]),
+						cenlons=np.array([None]),
+						dates=np.array([None]),
+						hours=np.array([None]),
+						idir_upper="./",
+						source_upperprefix="",
+						source="",
+						era_date_file_name="",
+						search_limits=[None,None,None,None],
+						search_region="",
+						max_dist=500,
+						vtl_vtu_lr=False,
+						custom_geopotential_var_name="",
+						custom_upper_level_variable_name="",
+						varlat="",
+						varlon="",
+						custom_date_file_name="",
+						tmpdir="./"
+						):
+
+	if vtl_vtu_lr:
+		listlev1=[900,850,800,750,700,650,600]
+		listlev2=[600,550,500,450,400,350,300]
+	else:
+		listlev1=[900,600]
+		listlev2=[600,300]
+
+
+	sourcelats = np.loadtxt(tmpdir+"/sourcelats.dat")
+	sourcelons= np.loadtxt(tmpdir+"/sourcelons.dat")
+	source_levels = np.loadtxt(tmpdir+"/source_levels.dat")
+	sourceZ = np.load(tmpdir+"/source_upper_"+dates[0]+hours[0]+".npy")
+
+	Zvar=np.empty((len(dates), sourceZ.shape[0], sourceZ.shape[1], sourceZ.shape[2]))
+	Zvar[0,:,:,:]=sourceZ
+	for idx in range(1, len(dates)):
+		fdate=dates[idx]+hours[idx]
+		sourceZ = np.load(tmpdir+"/source_upper_"+fdate+".npy")
+
+
+
+		Zvar[idx,:,:,:]=sourceZ
+
 	Bhart=compute_Bparameter_hart(cenlats=cenlats,
 			cenlons=cenlons,
 			max_dist=max_dist,
@@ -3676,11 +3731,65 @@ def get_VTU_VTL_B_series(cenlats=np.array([None]),
 			levels=source_levels,
 			Zvar=Zvar
 			)
-	#plot_VTL(dates, hours, VTL[:-1], Bhart,path="./", fname="VTL-B", dpi=600)
-	#plot_VTU(dates, hours, VTL[:-1], VTU[:-1], Bhart, path="./", fname="VTU-VTL", dpi=600)
-	
-	return VTU, VTL, Bhart
 
+	return Bhart
+
+
+def get_gap_VTL_VTU(cenlats=np.array([None]),
+						cenlons=np.array([None]),
+						dates=np.array([None]),
+						hours=np.array([None]),
+						idir_upper="./",
+						source_upperprefix="",
+						source="",
+						era_date_file_name="",
+						search_limits=[None,None,None,None],
+						search_region="",
+						max_dist=500,
+						vtl_vtu_lr=False,
+						custom_geopotential_var_name="",
+						custom_upper_level_variable_name="",
+						varlat="",
+						varlon="",
+						custom_date_file_name="",
+						tmpdir=""
+						):
+
+	sourcelats,sourcelons, Zvar, source_levels, listlev1, listlev2 = get_CPS_data(dates=dates,
+				hours=hours,
+				idir_upper=idir_upper,
+				source_upperprefix=source_upperprefix,
+				source=source,
+				era_date_file_name=era_date_file_name,
+				search_limits=search_limits,
+				search_region=search_region,
+				vtl_vtu_lr=vtl_vtu_lr,
+				custom_geopotential_var_name=custom_geopotential_var_name,
+				custom_upper_level_variable_name=custom_upper_level_variable_name,
+				varlat=varlat,
+				varlon=varlon,
+				custom_date_file_name=custom_date_file_name
+				)
+
+	np.save(tmpdir+"/source_upper_"+dates[0]+hours[0]+".npy",Zvar[0,:])
+	
+
+	VTL, VTU = compute_VT_series(dates=dates,
+				hours=hours,
+				listlev1=listlev1,
+				listlev2=listlev2,
+				liste_lat=cenlats,
+				liste_lon=cenlons,
+				max_dist=max_dist,
+				lats=sourcelats,
+				lons=sourcelons,
+				levels=source_levels,
+				Zvar=Zvar[0,:],
+				vtl_vtu_lr=vtl_vtu_lr
+				)
+
+
+	return VTU, VTL
 	
 def plot_VTL(dates,hours, VTL_series, B_series,path="./", fname="900-600hPa_Thermal_wind,png", dpi=600):
 	fig = plt.figure(figsize=(18., 12.))
@@ -3836,6 +3945,9 @@ def paring_centers(cyclone_type="",
 					ndate=[dates[index]]
 					nhour=[hours[index]]
 					nouter_r=[data[i,6]]
+					VTU=[data[i,7]]
+					VTL=[data[i,8]]
+
 					j=index+1
 
 					track_end=False
@@ -3848,7 +3960,7 @@ def paring_centers(cyclone_type="",
 								
 																
 								if  checking_upper_levels_parameters:
-									VTU, VTL, Bhart=get_VTU_VTL_B_series(cenlats=nlats,
+									Bhart=get_B_series(cenlats=nlats,
 																			cenlons=nlons,
 																			dates=ndate,
 																			hours=nhour,
@@ -3864,7 +3976,8 @@ def paring_centers(cyclone_type="",
 																			custom_upper_level_variable_name=custom_upper_level_variable_name,
 																			varlat=custom_varlat,
 																			varlon=custom_varlon,
-																			custom_date_file_name=custom_date_file_name
+																			custom_date_file_name=custom_date_file_name,
+																			tmpdir=tmpdir
 																			)
 									Bhart=np.append(Bhart,-99999)
 									cyclone_phase=get_cyclone_phase(VTU=VTU,VTL=VTL, B=Bhart)
@@ -3912,6 +4025,8 @@ def paring_centers(cyclone_type="",
 										nctype=[]
 										ndate=[]
 										nhour=[]
+										VTU=[]
+										VTL=[]
 										track_end=True
 																			
 									
@@ -3960,6 +4075,8 @@ def paring_centers(cyclone_type="",
 								nctype=[]
 								ndate=[]
 								nhour=[]
+								VTL=[]
+								VTU=[]
 								track_end=True
 						else:
 							ndata=tmp_data_loadt(tmpdir+"/critical_centers_"+nfdate+".dat")
@@ -3982,6 +4099,8 @@ def paring_centers(cyclone_type="",
 								nmws=np.append(nmws, ndata[k_paring,3])
 								nclosedp=np.append(nclosedp, ndata[k_paring,4])
 								nouter_r=np.append(nouter_r,ndata[k_paring,6])
+								VTU=np.append(VTU,ndata[k_paring,7])
+								VTL=np.append(VTL,ndata[k_paring,8])
 								ndate=np.append(ndate,dates[j])
 								nhour=np.append(nhour,hours[j])
 								latc=ndata[k_paring,0]
@@ -4023,6 +4142,9 @@ def paring_centers(cyclone_type="",
 									nextclosedp=ndata2[k_paring2,4]
 									nextouter_r=ndata2[k_paring2,6]
 
+									nextVTU=ndata2[k_paring2,7]
+									nextVTL=ndata2[k_paring2,8]
+
 									nlats=np.append(nlats, (nlats[-1]+nextlat)/2)
 									nlons=np.append(nlons, (nlons[-1]+nextlon)/2)
 									nroci=np.append(nroci, (nroci[-1]+nextroci)/2)
@@ -4030,10 +4152,39 @@ def paring_centers(cyclone_type="",
 									nmws=np.append(nmws, (nmws[-1]+nextmws)/2)
 									nclosedp=np.append(nclosedp, (nclosedp[-1]+nextclosedp)/2)
 									nouter_r=np.append(nouter_r,(nouter_r[-1]+nextouter_r)/2)
+
+
 									ndate=np.append(ndate,dates[j])
 									nhour=np.append(nhour,hours[j])
 									latc=(nlats[-1]+nextlat)/2
 									lonc=(nlons[-1]+nextlon)/2
+
+									if  checking_upper_levels_parameters:
+										VTU_, VTL_=get_gap_VTL_VTU(cenlats=[latc],
+																cenlons=[lonc],
+																dates=[dates[j]],
+																hours=[hours[j]],
+																idir_upper=idir_upper,
+																source_upperprefix=source_upperprefix,
+																source=source,
+																era_date_file_name=era_date_file_name,
+																search_limits=search_limits,
+																search_region=search_region,
+																max_dist=max_dist,
+																vtl_vtu_lr=vtl_vtu_lr,
+																custom_geopotential_var_name=custom_geopotential_var_name,
+																custom_upper_level_variable_name=custom_upper_level_variable_name,
+																varlat=custom_varlat,
+																varlon=custom_varlon,
+																custom_date_file_name=custom_date_file_name,
+																tmpdir=tmpdir)
+									else:
+										VTU_=-99999
+										VTL_=-99999
+
+									VTU=np.append(VTU,VTU_)
+									VTL=np.append(VTL,VTL_)
+
 									track_end=False
 							elif (len(nlats)-1)*dt_h>=dt_lifetime and nmws.max()>intensity_threshold:
 								check_dist=[]
@@ -4047,7 +4198,7 @@ def paring_centers(cyclone_type="",
 									
 									if  checking_upper_levels_parameters: 
 										
-										VTU, VTL, Bhart=get_VTU_VTL_B_series(cenlats=nlats,
+										Bhart=get_B_series(cenlats=nlats,
 																			cenlons=nlons,
 																			dates=ndate,
 																			hours=nhour,
@@ -4063,7 +4214,8 @@ def paring_centers(cyclone_type="",
 																			custom_upper_level_variable_name=custom_upper_level_variable_name,
 																			varlat=custom_varlat,
 																			varlon=custom_varlon,
-																			custom_date_file_name=custom_date_file_name
+																			custom_date_file_name=custom_date_file_name,
+																			tmpdir=tmpdir
 																			)
 										Bhart=np.append(Bhart,-99999)
 										cyclone_phase=get_cyclone_phase(VTU=VTU,VTL=VTL,B=Bhart)
@@ -4152,10 +4304,12 @@ def paring_centers(cyclone_type="",
 							ndate=[]
 							nhour=[]
 							nctype=[]
+							VTU=[]
+							VTL=[]
 						else:
 							j=j+1
-							
-		time.sleep(0.2)
+
+		time.sleep(0.0000005)
 		ProgressBar(index+1, len(dates), prefix = '	Progress', suffix = '', decimals = 1, length = 80, fill = '+', printEnd = "\r")
 	print("")
 	return sys_id
