@@ -23,7 +23,7 @@ CyTRACK is an open-source, comprehensive and user-friendly Python toolbox for de
 
 [![License: GPLv3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
- [![Current Version: ](https://img.shields.io/badge/Current_Version-1.0.2-blue)](https://anaconda.org/tramo-ephyslab/lattin)
+ [![Current Version: ](https://img.shields.io/badge/Current_Version-1.0.3-blue)](https://anaconda.org/tramo-ephyslab/cytrack)
 
 If you use CyTRACK, please cite it as follows:
 
@@ -31,7 +31,8 @@ If you use CyTRACK, please cite it as follows:
 Pérez-Alarcón, A.; Coll-Hidalgo, P.; Trigo, R.M.; Nieto, R.; Gimeno, L. (2024). CyTRACK: An open-source and user-friendly python toolbox for detecting and tracking cyclones. Environmental Modelling & Software, 176, 106027. https://doi.org/10.1016/j.envsoft.2024.106027.
 
 
-
+## Version History
+[![Version: ](https://img.shields.io/badge/Current_Version-1.0.3-blue)](https://anaconda.org/tramo-ephyslab/cytrack) updates CyTRACK for using the new release of the CDS API to download data from the ERA4 reanalysis.
 
 # What do I need to get and run CyTRACK?
 
