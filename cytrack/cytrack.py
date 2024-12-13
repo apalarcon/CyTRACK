@@ -406,7 +406,8 @@ def get_cytrack_main(pathfile=""):
 
 	time.sleep(1)
 	if rank==0:
-		os.system("rm -r "+tmpdir+"/*.npy")
+		if checking_upper_levels_parameters:
+			os.system("rm -r "+tmpdir+"/*.npy")
 
 	if rank==0 and remove_tmp_dir:
 		os.system("rm -r "+tmpdir)

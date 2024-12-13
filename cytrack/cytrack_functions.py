@@ -1112,38 +1112,62 @@ def get_custom_files(dates=[""],hours=[""],custom_file_prefix="",custom_date_fil
 def download_era5(erafile,year,month,day,hour):
 	import cdsapi
 	print(year, month, day, hour)
-	c = cdsapi.Client()
-	c.retrieve(
-    		'reanalysis-era5-single-levels',
-		{
-        	'product_type': 'reanalysis',
-		'variable':['10m_u_component_of_wind', '10m_v_component_of_wind', 'mean_sea_level_pressure',],
-		'year': year,
-		'month': month,
-		'day': day,
-		'time':hour+":00",
-		'format':"netcdf",
-		},
-		erafile)
+	#c = cdsapi.Client()
+	#c.retrieve(
+    #		'reanalysis-era5-single-levels',
+	#	{
+    #    	'product_type': 'reanalysis',
+	#	'variable':['10m_u_component_of_wind', '10m_v_component_of_wind', 'mean_sea_level_pressure',],
+	#	'year': year,
+	#	'month': month,
+	#	'day': day,
+	#	'time':hour+":00",
+	#	'format':"netcdf",
+	#	},
+	#	erafile)
+
+	dataset = "reanalysis-era5-single-levels"
+	request = {
+		"product_type": ["reanalysis"],
+		"variable": [
+			"10m_u_component_of_wind",
+			"10m_v_component_of_wind",
+			"mean_sea_level_pressure"
+		],
+		"year": [year],
+		"month": [month],
+		"day": [day],
+		"time": [f"{hour}:00"],
+		"data_format": "netcdf",
+		"download_format": "unarchived"
+	}
+
+	client = cdsapi.Client()
+	client.retrieve(dataset, request).download(erafile)
 
 
 def download_era5_upper(erafile_upper,year,month,day,hour):
 	import cdsapi
 	print(year, month, day, hour)
-	c = cdsapi.Client()
-	c.retrieve(
-		'reanalysis-era5-pressure-levels',
-		{
-		'product_type': 'reanalysis',
-		'variable':['geopotential'],
+	dataset = "reanalysis-era5-pressure-levels"
+	request = {
+		"product_type": ["reanalysis"],
+		"variable": [
+			'geopotential'
+		],
 		'pressure_level': ['200', '250','300', '350','400', '450','500', '550', '600', '650','700', '750', '800', '850', '900',],
-		'year': year,
-		'month': month,
-		'day': day,
-		'time':hour+":00",
-		'format':"netcdf",
-		},
-		erafile_upper)
+		"year": [year],
+		"month": [month],
+		"day": [day],
+		"time": [f"{hour}:00"],
+		"data_format": "netcdf",
+		"download_format": "unarchived"
+	}
+
+	client = cdsapi.Client()
+	client.retrieve(dataset, request).download(erafile_upper)
+
+
 
 
 
@@ -1405,6 +1429,10 @@ def get_era5_3dvar(idir="./",
 		):
 	
 	ncera=Dataset(idir+"/"+erafile)
+	if varlevel=="level" and not varlevel in ncera.variables.keys():
+		varlevel="pressure_level"
+
+
 	check_vars=[svariable, varlevel]
 	variablenot=False
 	for var in check_vars:
