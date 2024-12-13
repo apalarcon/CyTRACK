@@ -32,7 +32,7 @@ Pérez-Alarcón, A.; Coll-Hidalgo, P.; Trigo, R.M.; Nieto, R.; Gimeno, L. (2024)
 
 
 ## Version History
-[![Version: ](https://img.shields.io/badge/Current_Version-1.0.3-blue)](https://anaconda.org/tramo-ephyslab/cytrack) updates CyTRACK for using the new release of the CDS API to download data from the ERA4 reanalysis.
+[![Version: ](https://img.shields.io/badge/Version-1.0.3-blue)](https://anaconda.org/tramo-ephyslab/cytrack) updates CyTRACK for using the new release of the CDS API to download data from the ERA4 reanalysis.
 
 # What do I need to get and run CyTRACK?
 
