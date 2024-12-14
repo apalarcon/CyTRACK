@@ -21,6 +21,29 @@ mpisize = comm.Get_size()
 start_time = time.time()
 
 def get_cytrack_main(pathfile=""):
+	"""
+	Executes the main process of the CyTRACK cyclone tracking algorithm using parameters from a specified input file.
+
+	This function manages the configuration, initialization, and orchestration of the various components involved in 
+	tracking cyclones through meteorological data files. It utilizes MPI for parallel processing and manages input 
+	and output paths, temporal and spatial parameters, and various thresholds for tracking cyclones.
+
+	Parameters:
+	pathfile (str): The path to the input file containing configuration parameters.
+
+	Workflow:
+	- Reads and processes the input configuration file to extract necessary parameters.
+	- Initializes directories and prepares the environment for cyclone tracking.
+	- Retrieves date and hour vectors for the period of interest.
+	- Checks input meteorological files for availability.
+	- Executes the cyclone tracking process across specified meteorological data.
+	- Constructs cyclone trajectories by linking critical centers.
+	- Cleans up any temporary directories if specified.
+
+	Note:
+	The function is designed to run in a distributed computing environment using MPI, and it employs various helper 
+	functions and configurations to facilitate the tracking process.
+	"""
 	if rank==0:
 		disclaimer()
 		print("\n")

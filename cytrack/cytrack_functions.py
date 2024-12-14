@@ -25,13 +25,38 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 
 def program_name():
+	"""
+	Returns the name of the program.
+
+	This function provides the short name of the Cyclone TRACKing framework.
+
+	Returns:
+		str: The short name of the program 'CyTRACK'.
+	"""
 	return "CyTRACK"
 
 def program_fullname():
+	"""
+	Returns the full name of the Cyclone TRACKing framework.
+
+	This function provides the full name of the program 'Cyclone TRACKing'.
+
+	Returns:
+		str: The full name of the program 'Cyclone TRACKing'.
+	"""
 	return "Cyclone TRACKing"
 
 
 def get_currentversion():
+	"""
+	Retrieves the current version of the Cyclone TRACKing framework.
+
+	This function reads the version information from a file named 'VERSION'
+	located in the same directory as this script.
+
+	Returns:
+		str: The current version of the program as a string.
+	"""
 	pathpkg = os.path.dirname(__file__)
 	version_file = pathpkg+"/VERSION"
 	with open(version_file) as vfile:
@@ -40,15 +65,32 @@ def get_currentversion():
 
 
 def get_lsatupdate():
-        lupathpkg = os.path.dirname(__file__)
-        version_upd = lupathpkg+"/LAST_UPDATE"
-        with open(version_upd) as ufile:
-                uversion = ufile.readlines()[0].strip()
-        return(uversion)
+	"""
+	Retrieves the date of the last update of the Cyclone TRACKing framework.
+
+	This function reads the last update information from a file named 'LAST_UPDATE'
+	located in the same directory as this script.
+
+	Returns:
+		str: The date of the last update as a string.
+	"""
+	lupathpkg = os.path.dirname(__file__)
+	version_upd = lupathpkg+"/LAST_UPDATE"
+	with open(version_upd) as ufile:
+			uversion = ufile.readlines()[0].strip()
+	return(uversion)
 
 
 
 def disclaimer():
+	"""
+	Prints the disclaimer of the Cyclone TRACKing framework.
+
+	This function prints the disclaimer message including the name and version of
+	the program, the license information, the contact information and the date of
+	the last update.
+
+	"""
 	print("\n============================================================================================================")
 	print("||                                                                                                        ||")
 	print("||              +++++++                                                                                   ||")
@@ -70,6 +112,16 @@ def disclaimer():
 	print("============================================================================================================")
 	
 def read_args():
+	"""
+	Reads command line arguments for running CyTRACK.
+
+	- ``--parameterfile -pf``: name of parameters file.
+	- ``--cytrack_help -cth``: Help for CyTRACK input parameters.
+	- ``--get_template -gt``: Get a template for the CyTRACK input parameters.
+
+	Returns:
+		argparse.Namespace: Namespace with the parsed arguments.
+	"""
 	parser = argparse.ArgumentParser()
 	parser.add_argument(
 		"--parameterfile",
@@ -100,6 +152,13 @@ def read_args():
 
 
 def get_cytrack_inputs_template():
+	"""
+	Copies the template for the CyTRACK input parameters to the working directory.
+
+	This function prints the disclaimer message and copies the cytrack_inputs.cfg
+	template file to the working directory, so users can easily access it.
+
+	"""
 	disclaimer()
 	wpath=os.getcwd()
 	pathpkg = os.path.dirname(__file__)
@@ -111,6 +170,13 @@ def get_cytrack_inputs_template():
 
 
 def ending_credits():
+	"""
+	Prints the ending credits for CyTRACK.
+
+	This function prints the ending credits message, which includes the name and version
+	of the program, and a farewell message.
+
+	"""
 	print("\n\n============================================================================================================")
 	print(program_name() +" Version " +str(get_currentversion()) + " has successfully finished")
 	print("Bye :)")
@@ -118,6 +184,29 @@ def ending_credits():
 
 
 def get_limits_by_region(search_region="",cyclone_type=""):
+	"""
+	Defines the limits for the search region by cyclone type.
+
+	Parameters
+	----------
+	search_region : str
+		Region for the cyclone tracking. The options are:
+		* NA: North America
+		* SA: South America
+		* NP: North Pacific
+		* SP: South Pacific
+		* SI: South Indian Ocean
+		* NH: Northern Hemisphere
+		* SH: Southern Hemisphere
+		* GL: Global
+	cyclone_type : str
+		Type of cyclone: EC (extratropical cyclones), TC (tropical cyclones), MC (Mediterranean cyclones), or TLC (tropical-like cyclones)
+
+	Returns
+	-------
+	search_limits: list
+		List of 4 elements, which are the limits for the search region: [lon_min, lon_max, lat_min, lat_max]
+	"""
 	if cyclone_type.upper()=="EC":
 		if search_region.upper()=="NA":
 			search_limits=[-120,20,25,75]
@@ -204,6 +293,161 @@ def check_default_parameters(cyclone_type="",
 				calendar="366d"):
 	
 	
+	"""
+	This function sets default parameters based on the cyclone type and source of input data (ERA5 or WRF). Parameters are set to default values if they are not provided as arguments. The function then returns all parameters, including the updated default values.
+
+	Parameters
+	----------
+	cyclone_type : str
+		The type of cyclone (EC, TC, SC, or MC).
+	verbose : str
+		Whether to print error messages or not.
+	source : str
+		The source of input data (ERA5 or WRF).
+	path_out : str
+		The path to the directory where output files will be saved.
+	tmpdir : str
+		The path to the directory where temporary files will be saved.
+	path_data_source : str
+		The path to the directory where input data files are located.
+	path_data_source_upper : str
+		The path to the directory where upper-level input data files are located.
+	model_res : int
+		The horizontal resolution of the model (in km).
+	dt_h : int
+		The time interval between model output files (in hours).
+	filter_center_threshold : int
+		The threshold for determining the center of a cyclone (in m).
+	critical_outer_radius : int
+		The outer radius for determining the center of a cyclone (in km).
+	dist_threshold : int
+		The maximum distance between two cyclone centers (in km).
+	rout : int
+		The outer radius for determining the outer wind speed (in km).
+	dr_res : int
+		The horizontal resolution of the cyclone tracking algorithm (in km).
+	d_ang : int
+		The angular resolution of the cyclone tracking algorithm (in degrees).
+	remove_tmp_dir : str
+		Whether to remove the temporary directory after the program has finished running.
+	era_date_file_name : str
+		The name of the file that contains the dates of the ERA5 data.
+	min_slp_threshold : int
+		The minimum sea level pressure for a cyclone to be considered a cyclone (in mbar).
+	dt_lifetime : int
+		The time interval between model output files (in hours).
+	minimum_distance_travelled : int
+		The minimum distance a cyclone must travel in order to be considered a cyclone (in km).
+	terrain_filter : int
+		The terrain filter threshold (in m).
+	prev_days : int
+		The number of days before the current date to consider in the cyclone tracking algorithm.
+	mslp_anomaly_threshold : float
+		The threshold for determining a cyclone based on the sea level pressure anomaly (in mbar).
+	search_limits : list
+		The limits for searching for cyclones in the input data (in lat, lon, and pressure coordinates).
+	search_region : str
+		The region to search for cyclones in (e.g. NH, SH, GL).
+	max_wind_speed_threshold : int
+		The maximum wind speed for a cyclone to be considered a cyclone (in m/s).
+	outer_wind_speed_threshold : float
+		The outer wind speed threshold (in m/s).
+	intensity_threshold : float
+		The intensity threshold for a cyclone to be considered a cyclone (in m/s).
+	vorticity_threshold : float
+		The vorticity threshold for a cyclone to be considered a cyclone (in 1/s).
+	checking_upper_levels_parameters : bool
+		Whether to check the upper-level parameters (e.g. 500 hPa geopotential height) or not.
+	max_dist : int
+		The maximum distance between two cyclone centers (in km).
+	great_circle_distance : float
+		The distance between two points on the surface of a sphere (in km).
+	dmslp_great_circle_distance : int
+		The distance between two points on the surface of a sphere, calculated using the sea level pressure (in mbar).
+	radius_for_msw : int
+		The radius for calculating the outer wind speed (in km).
+	plotting_maps : bool
+		Whether to plot maps of the cyclones or not.
+	use_mslp_anomaly : bool
+		Whether to use the sea level pressure anomaly or not.
+	calendar : str
+		The calendar to use (e.g. 365d, 366d).
+
+	Returns
+	-------
+	filter_center_threshold : int
+		The threshold for determining the center of a cyclone (in m).
+	critical_outer_radius : int
+		The outer radius for determining the center of a cyclone (in km).
+	dist_threshold : int
+		The maximum distance between two cyclone centers (in km).
+	verbose : str
+		Whether to print error messages or not.
+	path_out : str
+		The path to the directory where output files will be saved.
+	tmpdir : str
+		The path to the directory where temporary files will be saved.
+	source : str
+		The source of input data (ERA5 or WRF).
+	path_data_source : str
+		The path to the directory where input data files are located.
+	path_data_source_upper : str
+		The path to the directory where upper-level input data files are located.
+	model_res : int
+		The horizontal resolution of the model (in km).
+	dt_h : int
+		The time interval between model output files (in hours).
+	rout : int
+		The outer radius for determining the outer wind speed (in km).
+	dr_res : int
+		The horizontal resolution of the cyclone tracking algorithm (in km).
+	d_ang : int
+		The angular resolution of the cyclone tracking algorithm (in degrees).
+	remove_tmp_dir : str
+		Whether to remove the temporary directory after the program has finished running.
+	era_date_file_name : str
+		The name of the file that contains the dates of the ERA5 data.
+	min_slp_threshold : int
+		The minimum sea level pressure for a cyclone to be considered a cyclone (in mbar).
+	dt_lifetime : int
+		The time interval between model output files (in hours).
+	minimum_distance_travelled : int
+		The minimum distance a cyclone must travel in order to be considered a cyclone (in km).
+	terrain_filter : int
+		The terrain filter threshold (in m).
+	prev_days : int
+		The number of days before the current date to consider in the cyclone tracking algorithm.
+	mslp_anomaly_threshold : float
+		The threshold for determining a cyclone based on the sea level pressure anomaly (in mbar).
+	search_limits : list
+		The limits for searching for cyclones in the input data (in lat, lon, and pressure coordinates).
+	search_region : str
+		The region to search for cyclones in (e.g. NH, SH, GL).
+	max_wind_speed_threshold : int
+		The maximum wind speed for a cyclone to be considered a cyclone (in m/s).
+	outer_wind_speed_threshold : float
+		The outer wind speed threshold (in m/s).
+	intensity_threshold : float
+		The intensity threshold for a cyclone to be considered a cyclone (in m/s).
+	vorticity_threshold : float
+		The vorticity threshold for a cyclone to be considered a cyclone (in 1/s).
+	checking_upper_levels_parameters : bool
+		Whether to check the upper-level parameters (e.g. 500 hPa geopotential height) or not.
+	max_dist : int
+		The maximum distance between two cyclone centers (in km).
+	great_circle_distance : float
+		The distance between two points on the surface of a sphere (in km).
+	dmslp_great_circle_distance : int
+		The distance between two points on the surface of a sphere, calculated using the sea level pressure (in mbar).
+	radius_for_msw : int
+		The radius for calculating the outer wind speed (in km).
+	plotting_maps : bool
+		Whether to plot maps of the cyclones or not.
+	use_mslp_anomaly : bool
+		Whether to use the sea level pressure anomaly or not.
+	calendar : str
+		The calendar to use (e.g. 365d, 366d).
+	"""
 	if cyclone_type=="":
 		print_error_message("cyclone_type is not defined")
 		
@@ -614,6 +858,55 @@ def print_dafault_values(cyclone_type="",
 			use_mslp_anomaly=True
 			):
 		
+	"""
+	Prints the default values for the Cyclone TRACKing run parameters.
+
+	This function outputs the default values for various parameters used in the
+	Cyclone TRACKing framework. These parameters include cyclone type, thresholds,
+	spatial and temporal search limits, and file paths for output and temporary
+	files. The parameters are printed if verbose mode is enabled.
+
+	Args:
+		cyclone_type (str): Type of cyclone (e.g., TC, EC, etc.).
+		verbose (str): Whether to print information during the run ('yes' or 'no').
+		path_out (str): Directory path to save output files.
+		dt_h (int): Time step in hours.
+		tmpdir (str): Directory path for temporary files.
+		filter_center_threshold (int): Threshold for filter center in km.
+		critical_outer_radius (int): Critical outer radius in km.
+		dist_threshold (int): Distance threshold in km.
+		rout (int): Outer radius in km.
+		dr_res (int): Spatial resolution in km.
+		d_ang (int): Angular resolution in degrees.
+		remove_tmp_dir (str): Whether to remove temporary directory ('yes' or 'no').
+		min_slp_threshold (int): Minimum sea level pressure threshold in hPa.
+		dt_lifetime (int): Minimum lifetime in hours.
+		minimum_distance_travelled (int): Minimum distance travelled in km.
+		terrain_filter (int): Terrain filter height in meters.
+		start_date (str): Start date of the run.
+		start_hour (str): Start hour of the run.
+		end_date (str): End date of the run.
+		end_hour (str): End hour of the run.
+		prev_days (int): Number of previous days considered.
+		mslp_anomaly_threshold (float): Mean sea level pressure anomaly threshold in hPa.
+		search_limits (list): Search limits with [min_lat, max_lat, min_lon, max_lon].
+		search_region (str): Search region name.
+		max_wind_speed_threshold (float): Maximum wind speed threshold in m/s.
+		outer_wind_speed_threshold (float): Outer wind speed threshold in m/s.
+		intensity_threshold (float): Intensity threshold in m/s.
+		vorticity_threshold (float): Vorticity threshold in 1/s.
+		great_circle_distance (float): Great circle distance in degrees.
+		dmslp_great_circle_distance (int): Pressure distance for MSLP in Pa.
+		radius_for_msw (int): Radius for maximum sustained winds in km.
+		checking_upper_levels_parameters (bool): Flag to check upper level parameters.
+		vtl_vtu_lr (bool): Flag for VTU and VTL criteria check.
+		core_criteria_length (int): Length of core criteria.
+		VTL_threshold (int): Threshold for VTL.
+		VTU_threshold (int): Threshold for VTU.
+		Bhart_threshold (int): Bhart threshold.
+		use_mslp_anomaly (bool): Whether to use MSLP anomaly.
+
+	"""
 	if  str2boolean(verbose):
 		print("\nParameters for "+program_name() + " runs")
 		print("============================================================================================================")
@@ -899,28 +1192,79 @@ def help():
 
 
 def str2boolean(arg):
-    if isinstance(arg, bool):
-        return arg
-    if arg.lower() in ("yes", "true", "t", "y", "1"):
-        return True
-    elif arg.lower() in ("no", "false", "f", "n", "0"):
-        return False
-    else:
-        raise argparse.ArgumentTypeError("Boolean value expected.")
+	"""
+	Convert a string argument to a boolean value.
+
+	This function is used by :py:mod:`argparse` to convert command line arguments
+	to boolean values.
+
+	Parameters
+	----------
+	arg : str
+		The string value to be converted to a boolean.
+
+	Returns
+	-------
+	bool
+		The boolean value corresponding to `arg`.
+
+	Raises
+	------
+	argparse.ArgumentTypeError
+		If `arg` is not a string representing a boolean value.
+	"""
+	if isinstance(arg, bool):
+		return arg
+	if arg.lower() in ("yes", "true", "t", "y", "1"):
+		return True
+	elif arg.lower() in ("no", "false", "f", "n", "0"):
+		return False
+	else:
+		raise argparse.ArgumentTypeError("Boolean value expected.")
 
 def print_error_message(message):
+	"""
+	Prints an error message and exits the program.
+
+	This function prints the specified error message, formatted with separators,
+	and then raises a SystemExit exception to terminate the program.
+
+	Args:
+		message (str): The error message to be displayed.
+	"""
 	print("=============================================================================================================")
 	print ("ERROR: "+message)
 	print("=============================================================================================================")
 	raise SystemExit("Bye :)")
 
 def checking_optimum_nproc(rank, n_proc, length_files):
+	"""
+	Checks that the number of processors (n_proc) is not greater than the number of files to be processed (length_files).
+
+	Args:
+		rank (int): The rank of the current processor.
+		n_proc (int): The number of processors requested.
+		length_files (int): The number of files to be processed.
+
+	Raises:
+		SystemExit: If the number of processors requested is greater than the number of files to be processed.
+	"""
 	if n_proc > length_files:
 		if rank==0:
 			print_error_message("You are using " + str(int(n_proc)) + " processors. It exceeds the number of files to be processed.\n Use "+str(int(length_files))+" procesors")
 		raise SystemExit("Bye :)")
 
 def check_paths(pfile, path):
+	"""
+	Get the value of a parameter from an argparse object.
+
+	Args:
+		pfile (argparse.Namespace): The argparse object from which to retrieve the parameter value.
+		path (str): The name of the parameter to retrieve.
+
+	Returns:
+		str: The value of the parameter if it exists, otherwise an empty string.
+	"""
 	try: 
 		fpath = getattr(pfile, path)
 	except:
@@ -928,14 +1272,28 @@ def check_paths(pfile, path):
 	return fpath
 
 def get_dates(date_init, date_end,dt_h):
+	"""
+	Get a list of dates with a given time step between two dates.
+
+	Parameters
+	----------
+	date_init : datetime
+		The initial date.
+	date_end : datetime
+		The final date.
+	dt_h : int
+		The time step in hours.
+
+	Returns
+	-------
+	list
+		A list of dates with the given time step between the initial and final dates.
+	"""
 	dates=[]
 	delta=date_end-date_init
 	for i in range(0,int(delta.total_seconds()/3600) + dt_h,dt_h):
 		dates = np.append(dates,str(date_init + timedelta(hours=i)))
 	return dates
-
-
-
 
 
 
@@ -954,6 +1312,41 @@ def get_dates_vectors(year_case_init="",
 		):
 	
 	
+	"""
+	Get a list of dates with a given time step between two dates.
+
+	Parameters
+	----------
+	year_case_init : str
+		The year of the initial date.
+	month_case_init : str
+		The month of the initial date.
+	day_case_init : str
+		The day of the initial date.
+	hour_case_init : str
+		The hour of the initial date.
+	year_case_end : str
+		The year of the final date.
+	month_case_end : str
+		The month of the final date.
+	day_case_end : str
+		The day of the final date.
+	hour_case_end : str
+		The hour of the final date.
+	dt_h : int
+		The time step in hours.
+	prev_days : int
+		The number of days to be processed.
+	previous_dates : bool
+		Flag to indicate if previous dates should be used.
+	calendar : str
+		The calendar type (366d or 365d).
+
+	Returns
+	-------
+	list
+		A list of dates with the given time step between the initial and final dates.
+	"""
 	prev_days=np.abs(prev_days)
 	
 	if (dt_h==None or dt_h==0 or dt_h>6) and previous_dates==False:
@@ -1057,15 +1450,60 @@ def get_dates_vectors(year_case_init="",
 
 
 def ProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '+', printEnd = "\r"):
-    percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
-    filledLength = int(length * iteration // total)
-    bar = fill * filledLength + '-' * (length - filledLength)
-    print(f'\r{prefix} |{bar}| {percent}% {suffix}', end = "\r")
-    if iteration == total: 
-        print()
+	"""
+	Displays or updates a console-based progress bar.
+
+	Parameters
+	----------
+	iteration : int
+		Current iteration (must be between 0 and `total`).
+	total : int
+		Total number of iterations.
+	prefix : str, optional
+		A string to be printed before the progress bar (default is an empty string).
+	suffix : str, optional
+		A string to be printed after the progress bar (default is an empty string).
+	decimals : int, optional
+		Positive number of decimals in the percent complete (default is 1).
+	length : int, optional
+		Character length of the progress bar (default is 100).
+	fill : str, optional
+		Bar fill character (default is '+').
+	printEnd : str, optional
+		End character (e.g. "\r", "\n") (default is "\r").
+
+	Notes
+	-----
+	Call this function in a loop to create a progress bar in the console.
+	"""
+	percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
+	filledLength = int(length * iteration // total)
+	bar = fill * filledLength + '-' * (length - filledLength)
+	print(f'\r{prefix} |{bar}| {percent}% {suffix}', end = "\r")
+	if iteration == total: 
+		print()
 
 
 def get_era5_files(dates=[""],hours=[""],era_file_prefix="",era_date_file_name="yyyymmdd_hh"):
+	"""
+	Generate a list of ERA5 file names given a list of dates and hours.
+
+	Parameters
+	----------
+	dates : list of str
+		List of dates in the format "yyyymmdd"
+	hours : list of str
+		List of hours in the format "hh"
+	era_file_prefix : str
+		Prefix to add to each file name
+	era_date_file_name : str
+		Format of the date in the file name, either "yyyymmdd_hh" or "yyyymmddhh"
+
+	Returns
+	-------
+	erafiles : list of str
+		List of ERA5 file names
+	"""
 	erafiles=[]
 	for i in range(0,len(dates)):
 		year=dates[i][0:4].zfill(4)
@@ -1088,6 +1526,25 @@ def get_era5_files(dates=[""],hours=[""],era_file_prefix="",era_date_file_name="
 
 
 def get_custom_files(dates=[""],hours=[""],custom_file_prefix="",custom_date_file_name="yyyymmdd_hh"):
+	"""
+	Generate a list of custom file names given a list of dates and hours.
+
+	Parameters
+	----------
+	dates : list of str
+		List of dates in the format "yyyymmdd"
+	hours : list of str
+		List of hours in the format "hh"
+	custom_file_prefix : str
+		Prefix to add to each file name
+	custom_date_file_name : str
+		Format of the date in the file name, either "yyyymmdd_hh" or "yyyymmddhh"
+
+	Returns
+	-------
+	customfiles : list of str
+		List of custom file names
+	"""
 	customfiles=[]
 	for i in range(0,len(dates)):
 		year=dates[i][0:4].zfill(4)
@@ -1097,7 +1554,7 @@ def get_custom_files(dates=[""],hours=[""],custom_file_prefix="",custom_date_fil
 		hour=hours[i].zfill(2)
 		if custom_date_file_name=="yyyymmdd_hh":
 			nfame=year+month+day+"_"+hour
-		elif custom__date_file_name=="yyyymmdd_hh":
+		elif custom_date_file_name=="yyyymmdd_hh":
 			nfame=year+month+day+hour
 		else:
 			print_error_message("Unrecognized CUSTOM file custom_date_file_name attribute in CyTRACK input paramters file\ncustom_date_file_name must be yyyymmdd_hh or yyyymmddhh\nRun << python run_CyTRACK.py - cth t >> for help")
@@ -1110,6 +1567,26 @@ def get_custom_files(dates=[""],hours=[""],custom_file_prefix="",custom_date_fil
 
 
 def download_era5(erafile,year,month,day,hour):
+	"""
+	Download an ERA5 file using the Copernicus Climate Data Store API.
+
+	Parameters
+	----------
+	erafile : str
+		Full path to the output file name
+	year : int
+		Year of the data to download
+	month : int
+		Month of the data to download
+	day : int
+		Day of the data to download
+	hour : int
+		Hour of the data to download
+
+	Returns
+	-------
+	None
+	"""
 	import cdsapi
 	print(year, month, day, hour)
 	#c = cdsapi.Client()
@@ -1147,6 +1624,26 @@ def download_era5(erafile,year,month,day,hour):
 
 
 def download_era5_upper(erafile_upper,year,month,day,hour):
+	"""
+	Download an ERA5 upper level file using the Copernicus Climate Data Store API.
+
+	Parameters
+	----------
+	erafile_upper : str
+		Full path to the output file name
+	year : int
+		Year of the data to download
+	month : int
+		Month of the data to download
+	day : int
+		Day of the data to download
+	hour : int
+		Hour of the data to download
+
+	Returns
+	-------
+	None
+	"""
 	import cdsapi
 	print(year, month, day, hour)
 	dataset = "reanalysis-era5-pressure-levels"
@@ -1173,6 +1670,23 @@ def download_era5_upper(erafile_upper,year,month,day,hour):
 
 
 def get_wrf_files(dates=[""],hours=[""], wrfprefix="d01"):
+	"""
+	Generate a list of WRF file names given a list of dates and hours.
+
+	Parameters
+	----------
+	dates : list of str
+		List of dates in the format "yyyymmdd".
+	hours : list of str
+		List of hours in the format "hh".
+	wrfprefix : str
+		Prefix to add to each file name (default is "d01").
+
+	Returns
+	-------
+	wrfiles : list of str
+		List of WRF file names.
+	"""
 	wrfiles=[]
 	for i in range(0,len(dates)):
 		fname=wrfprefix+"_"+dates[i][0:4]+"-"+dates[i][4:6]+"-"+dates[i][6:8]+"_"+hours[i]+":00:00"
@@ -1180,6 +1694,32 @@ def get_wrf_files(dates=[""],hours=[""], wrfprefix="d01"):
 	return wrfiles
 
 def checking_input_files(pathfile, source_file, source,date,hour,flev='sfc', rank=0):
+	
+	"""
+	Check if a file exists in a given path. If the file does not exist, raise a SystemExit if the source is WRF or CUSTOM, otherwise try to download the file from ERA5.
+
+	Parameters
+	----------
+	pathfile : str
+		Path to the file.
+	source_file : str
+		Name of the file to be checked.
+	source : str
+		Source of the data (WRF, ERA5, CUSTOM).
+	date : str
+		Date of the data in the format "yyyymmdd".
+	hour : str
+		Hour of the data in the format "hh".
+	flev : str
+		Level of the data (sfc or upper).
+	rank : int
+		Rank of the MPI process (default is 0).
+
+	Returns
+	-------
+	bool
+		True if the file exists, False otherwise.
+	"""
 	if os.path.exists(pathfile+"/"+source_file):
 		pass
 	elif source.upper()=="WRF":
@@ -1207,6 +1747,24 @@ def checking_input_files(pathfile, source_file, source,date,hour,flev='sfc', ran
 	return True
 
 def get_wrf_hgt(idir="",wrffile=""):
+	"""
+	Retrieve height, latitude, and longitude data from a WRF file.
+
+	Parameters
+	----------
+	idir : str,
+		Directory path to the WRF file (default is an empty string).
+	wrffile : str, optional
+		Name of the WRF file (default is an empty string).
+
+	Returns
+	-------
+	tuple
+		A tuple containing:
+		- lat (numpy.ndarray): Latitude data.
+		- lon (numpy.ndarray): Longitude data.
+		- hgt (numpy.ndarray): Height data.
+	"""
 	ncwrffile=Dataset(idir+"/"+wrffile)
 	hgt=ncwrffile.variables["HGT"][:]
 	lat=ncwrffile.variables["XLAT"][0,:]
@@ -1217,6 +1775,19 @@ def get_wrf_hgt(idir="",wrffile=""):
 
 
 def get_i_bg(prev_days):
+	"""
+	Calculate the index (i_bg) based on the number of previous days.
+
+	Parameters
+	----------
+	prev_days : int
+		The number of previous days to consider.
+
+	Returns
+	-------
+	int
+		The index (i_bg), calculated as 4 times the number of previous days if positive, otherwise 0.
+	"""
 	if prev_days>0:
 		i_bg=int(prev_days)*4
 	else:
@@ -1238,6 +1809,41 @@ def get_mslp_anomaly(idir="./",
 			custom_longitude_var=""):
 
 
+	"""
+	Get the mean sea level pressure anomaly (MSLP) for a given date and time over a previous number of days.
+
+	Parameters
+	----------
+	idir : str
+		Directory path to the data files (default is the current working directory).
+	source : str
+		The source of the data (ERA5, WRF, or CUSTOM).
+	search_limits : list of float
+		The limits of the region to search for the MSLP anomaly (default is [None, None, None, None]).
+	search_region : str
+		The name of the region to search for the MSLP anomaly (default is an empty string).
+	prev_days : int
+		The number of previous days to consider for the MSLP anomaly (default is 14).
+	date : str
+		The date of the data in the format "yyyymmdd".
+	hour : str
+		The hour of the data in the format "hh".
+	source_filename_prefix : str
+		The filename prefix for the data files (default is an empty string).
+	source_file_date_format : str
+		The date format of the data files (default is an empty string).
+	custom_mslp_variable : str
+		The name of the MSLP variable in the CUSTOM data files (default is an empty string).
+	custom_latitude_var : str
+		The name of the latitude variable in the CUSTOM data files (default is an empty string).
+	custom_longitude_var : str
+		The name of the longitude variable in the CUSTOM data files (default is an empty string).
+
+	Returns
+	-------
+	numpy.ndarray
+		The mean sea level pressure anomaly for the given date and time over the previous number of days.
+	"""
 	dates,hours=get_dates_vectors(year_case_init=date[0:4],
 					month_case_init=date[4:6].zfill(2),
 					day_case_init=date[6:8].zfill(2),
@@ -1302,6 +1908,29 @@ def get_era5_2dvar(idir="./",
 		search_region=""):
 	
 	
+	"""
+	Reads ERA5 2D variables from a netCDF file and returns a numpy array
+	with the data. The function also applies a subregion of the data based
+	on the search_limits and search_region arguments.
+
+	Parameters
+	----------
+	idir : str
+		Directory where the ERA5 netCDF file is located.
+	erafile : str
+		Name of the ERA5 netCDF file.
+	svariables : list of str
+		List of variables to be read from the netCDF file.
+	search_limits : list of float
+		Search limits for subregion (lonmin,lonmax,latmin,latmax).
+	search_region : str
+		Region for subregion (e.g. "NA" for North Atlantic).
+
+	Returns
+	-------
+	varlist : numpy array
+		Array with the variables read from the netCDF file.
+	"""
 	ncera=Dataset(idir+"/"+erafile)
 	eralat=ncera.variables["latitude"][:]
 	eralon=ncera.variables["longitude"][:]
@@ -1354,6 +1983,33 @@ def get_custom_2dvar(idir="./",
 		custom_longitude_var="longitude"):
 	
 	
+	"""
+	Reads a custom 2D variable from a netCDF file and returns a numpy array
+	with the data. The function also applies a subregion of the data based
+	on the search_limits and search_region arguments.
+
+	Parameters
+	----------
+	idir : str
+		Directory where the custom netCDF file is located.
+	customfile : str
+		Name of the custom netCDF file.
+	svariables : list of str
+		List of variables to be read from the netCDF file.
+	search_limits : list of float
+		Search limits for subregion (lonmin,lonmax,latmin,latmax).
+	search_region : str
+		Region for subregion (e.g. "NA" for North Atlantic).
+	custom_latitude_var : str
+		Name of the latitude variable in the custom netCDF file.
+	custom_longitude_var : str
+		Name of the longitude variable in the custom netCDF file.
+
+	Returns
+	-------
+	varlist : numpy array
+		Array with the variables read from the netCDF file.
+	"""
 	nc=Dataset(idir+"/"+customfile)
 	customlat=nc.variables[custom_latitude_var][:]
 	customlon=nc.variables[custom_longitude_var][:]
@@ -1404,6 +2060,22 @@ def get_custom_2dvar(idir="./",
 
 
 def get_cumstom_hgt_data(filename, varname):
+	"""
+	Reads a custom 2D variable from a netCDF file and returns a numpy array
+	with the data.
+
+	Parameters
+	----------
+	filename : str
+		Name of the netCDF file.
+	varname : str
+		Name of the variable to be read from the netCDF file.
+
+	Returns
+	-------
+	hgt : numpy array
+		Array with the data read from the netCDF file.
+	"""
 	cnc=Dataset(filename)
 	
 	hgt=cnc.variables[varname][:]
@@ -1427,6 +2099,50 @@ def get_era5_3dvar(idir="./",
 		):
 
 	#ncera=Dataset(idir+"/"+erafile)
+	"""
+	Reads a 3D variable from an ERA5 netCDF file and returns a numpy array
+	with the data.
+
+	Parameters
+	----------
+	idir : str
+		Directory with the netCDF file.
+	erafile : str
+		Name of the netCDF file.
+	svariable : str
+		Name of the variable to be read from the netCDF file.
+	varlevel : str
+		Name of the pressure level variable in the netCDF file. Default is "level".
+	search_limits : list
+		List with the limits of the region to be extracted from the netCDF file.
+		Format is [lat_min, lat_max, lon_min, lon_max].
+	search_region : str
+		Region to be extracted from the netCDF file. Options are "NA", "SA", "AL", "MS".
+	fdate : str
+		Date of the data in the netCDF file. Format is "yyyymmdd_hh".
+	full : bool
+		Flag to indicate if the full data should be returned or just the subregion.
+	dims : bool
+		Flag to indicate if the dimensions of the subregion should be returned instead of the data.
+
+	Returns
+	-------
+	sub_evar : numpy array
+		Array with the data read from the netCDF file.
+	nera_lat : numpy array
+		Array with the latitude of the subregion.
+	nera_lon : numpy array
+		Array with the longitude of the subregion.
+	levels : numpy array
+		Array with the pressure levels of the subregion.
+	num_levels : int
+		Number of pressure levels in the subregion.
+	dimy : int
+		Number of points in the y-direction of the subregion.
+	dimx : int
+		Number of points in the x-direction of the subregion.
+	"""
+	
 	import xarray as xr
 	ncera = xr.open_dataset(idir+"/"+erafile)
 
@@ -1525,6 +2241,37 @@ def get_era5_3dvarV2(idir="./",
 		dims=False
 		):
 	
+	"""
+	Extracts and processes 3D ERA5 variables from a netCDF file.
+
+	Parameters
+	----------
+	idir : str
+		Directory where the ERA5 netCDF file is located.
+	erafile : str
+		Name of the ERA5 netCDF file.
+	svariable : str
+		Name of the variable to extract.
+	varlevel : str
+		Name of the variable level (default is "level").
+	search_limits : list of float
+		Geographic limits for subregion extraction (lat_min, lat_max, lon_min, lon_max).
+	search_region : str
+		Specific region to extract (e.g., "NA" for North Atlantic).
+	fdate : str
+		Date of the data in the format "yyyymmdd_hh".
+	full : bool
+		Flag indicating whether to return the full data or just the subregion.
+	dims : bool
+		Flag indicating whether to return dimensions instead of data.
+
+	Returns
+	-------
+	tuple
+		If dims is True, returns (num_levels, dimy, dimx).
+		If full is True, returns (evar, latt, lonn, levels).
+		Otherwise, returns (sub_evar, nera_lat, nera_lon, levels).
+	"""
 	ncera=Dataset(idir+"/"+erafile)
 
 
@@ -1622,6 +2369,45 @@ def get_custom_3dvar(idir="./",
 		varlon=""
 		):
 	
+	"""
+	Reads a 3D variable from a custom netCDF file and returns a numpy array
+	with the data.
+
+	Parameters
+	----------
+	idir : str
+		Directory with the netCDF file.
+	customfile : str
+		Name of the netCDF file.
+	svariable : str
+		Name of the variable to be read from the netCDF file.
+	varlevel : str
+		Name of the pressure level variable in the netCDF file. Default is "level".
+	search_limits : list
+		List with the limits of the region to be extracted from the netCDF file.
+		Format is [lat_min, lat_max, lon_min, lon_max].
+	search_region : str
+		Region to be extracted from the netCDF file. Options are "NA", "SA", "AL", "MS".
+	fdate : str
+		Date of the data in the netCDF file. Format is "yyyymmdd_hh".
+	full : bool
+		Flag to indicate if the full data should be returned or just the subregion.
+	varlat : str
+		Name of the latitude variable in the custom netCDF file.
+	varlon : str
+		Name of the longitude variable in the custom netCDF file.
+
+	Returns
+	-------
+	evar : numpy array
+		Array with the data read from the netCDF file.
+	latt : numpy array
+		Array with the latitude of the subregion.
+	lonn : numpy array
+		Array with the longitude of the subregion.
+	levels : numpy array
+		Array with the pressure levels of the subregion.
+	"""
 	nc=Dataset(idir+"/"+customfile)
 	check_vars=[svariable, varlevel]
 	variablenot=False
@@ -1662,6 +2448,15 @@ def get_custom_3dvar(idir="./",
 
 
 def get_era5_hgtfile():
+	"""
+	Retrieves the file name of the ERA5 terrain high file.
+
+	This function returns the full path to the file containing the ERA5 terrain
+	height data.
+
+	Returns:
+		str: Full path to the ERA5 terrain high file name.
+	"""
 	pathpkg = os.path.dirname(__file__)
 	hgt_file= pathpkg+"/ERA5_terrain_high.nc"
 	return hgt_file
@@ -1669,6 +2464,17 @@ def get_era5_hgtfile():
 
 def convert_era5_matrix(matrix,lon,search_lon):
 		
+	"""
+	Shifts the columns of a matrix to the left so that the value at index 'search_lon' is located at the beginning of the matrix.
+	
+	Parameters:
+		matrix (numpy array): The matrix to be shifted.
+		lon (numpy array): The longitude array associated with the matrix.
+		search_lon (float): The value to be located at the beginning of the matrix.
+	
+	Returns:
+		tuple: A tuple containing the shifted matrix and the associated longitude array.
+	"""
 	index=np.where(lon==search_lon)
 	index=int(index[0])
 	aux_matrix=np.empty_like(matrix)
@@ -1681,6 +2487,30 @@ def convert_era5_matrix(matrix,lon,search_lon):
 
 
 def era_subregion(lat=np.array(None),lon=np.array(None),var="",search_limits=[None,None,None,None]):
+	"""
+	Subregions a given ERA5 variable based on a set of search limits.
+	
+	Parameters
+	----------
+	lat : numpy array
+		Latitude array.
+	lon : numpy array
+		Longitude array.
+	var : numpy array
+		Array with the variable to be subregioned.
+	search_limits : list
+		List with the limits of the region to be extracted from the netCDF file.
+		Format is [lat_min, lat_max, lon_min, lon_max].
+	
+	Returns
+	-------
+	nlat : numpy array
+		Array with the latitude of the subregion.
+	nlon : numpy array
+		Array with the longitude of the subregion.
+	nvar : numpy array
+		Array with the variable subregioned.
+	"""
 	latmin=search_limits[1]
 	latmax=search_limits[3]
 	lonmin=search_limits[0]
@@ -1715,6 +2545,43 @@ def era_subregion(lat=np.array(None),lon=np.array(None),var="",search_limits=[No
 def get_wind_speed(latsc=[None],lonsc=[None],radius=[None],wfile="",idir="./",varu="U",varv="V",varlat="lat",varlon="lon",source="WRF",search_limits=[None,None,None,None],search_region="",r_uv=False):
 	
 
+	"""
+	Get the wind speed at a given set of coordinates (latsc, lonsc) within a given radius (radius) from a WRF or ERA5 file.
+
+	Parameters
+	----------
+	latsc : numpy array
+		Array with the latitude of the points where the wind speed will be calculated.
+	lonsc : numpy array
+		Array with the longitude of the points where the wind speed will be calculated.
+	radius : numpy array
+		Array with the radius of the circle to calculate the wind speed.
+	wfile : str
+		Name of the WRF or ERA5 file to read.
+	idir : str
+		Directory path to the WRF or ERA5 file (default is the current working directory).
+	varu : str
+		Name of the u-wind variable in the WRF or ERA5 file (default is "U").
+	varv : str
+		Name of the v-wind variable in the WRF or ERA5 file (default is "V").
+	varlat : str
+		Name of the latitude variable in the WRF or ERA5 file (default is "lat").
+	varlon : str
+		Name of the longitude variable in the WRF or ERA5 file (default is "lon").
+	source : str
+		Source of the data (WRF or ERA5).
+	search_limits : list of float
+		The limits of the region to search for the wind speed (default is [None, None, None, None]).
+	search_region : str
+		The name of the region to search for the wind speed (default is an empty string).
+	r_uv : boolean
+		Whether to return the u and v wind components or the wind speed (default is False).
+
+	Returns
+	-------
+	numpy array
+		Array with the wind speed at the given coordinates.
+	"""
 	if source.upper()=="WRF":
 		ncwfile=Dataset(idir+"/"+wfile)
 		u=ncwfile.variables[varu][:]
@@ -1815,6 +2682,115 @@ def tracker_cyclones(cyclone_type="",
 		source_upperprefix=""):
 
 	
+	"""
+	Track cyclones in 2D fields.
+
+	Parameters
+	----------
+	cyclone_type : str
+		Type of cyclone to track (TC, MC, TLC, SC, EC).
+	source : str
+		Source of the data (WRF, ERA5, CUSTOM).
+	idir : str
+		Directory path to the WRF or ERA5 file (default is the current working directory).
+	sourcefiles : list of str
+		List of file names to read.
+	pathoutput : str
+		Directory path to the output files (default is the current working directory).
+	rout : float
+		Radius of the region to search for computing cyclone size (default is 2000 km).
+	verbose : boolean
+		Whether to print information on the processing (default is True).
+	dates : list of str
+		List of dates to process.
+	hours : list of str
+		List of hours to process.
+	model_res : float
+		Resolution of the model (default is 20 km).
+	search_limits : list of float
+		The limits of the region to search for the wind speed (default is [None, None, None, None]).
+	dr_res : float
+		Resolution of the wind speed grid (default is 100 km).
+	d_ang : float
+		Angle of the wind speed grid (default is 10 deg).
+	filter_center_threshold : float
+		Threshold for the wind speed at the center of the cyclone (default is 800 m/s).
+	critical_outer_radius : float
+		Minumum size of the cyclone (default is 50 km).
+	tmpdir : str
+		Directory path to the temporary files (default is the current working directory).
+	rank : int
+		Rank of the process (default is 0).
+	search_region : str
+		The name of the region to search for the wind speed (default is an empty string).
+	min_slp_threshold : float
+		Minimum pressure threshold for the cyclone (default is 1015 hPa).
+	terrain_filter : float
+		Threshold for the terrain height (default is 1000 m).
+	prev_days : int
+		Number of days to consider for the mean sea level pressure anomaly (default is 14).
+	mslp_anomaly_threshold : float
+		Threshold for the mean sea level pressure anomaly (default is -3 hPa).
+	source_filename_prefix : str
+		Prefix of the file name (default is an empty string).
+	source_file_date_format : str
+		Format of the date in the file name (default is an empty string).
+	max_wind_speed_threshold : float
+		Maximum wind speed threshold (default is 10 m/s).
+	outer_wind_speed_threshold : float
+		Threshold for the wind speed at the outer circle (default is 2.5 m/s).
+	vorticity_threshold : float
+		Threshold for the vorticity (default is 1.45e-5 1/s).
+	great_circle_distance : float
+		Distance for the great circle (default is 5.5 deg).
+	dmslp_great_circle_distance : float
+		Distance for the great circle for the mean sea level pressure (default is 200 km).
+	radius_for_msw : float
+		Radius for the mean sea level pressure (default is 100 km).
+	sourcefilesupper : list of str
+		List of file names for the upper levels (default is [None]).
+	checking_upper_levels_parameters : boolean
+		Whether to check the parameters for the upper levels (default is False).
+	vtl_vtu_lr : boolean
+		Whether to compute the vorticity and divergence at the lower resolution (default is False).
+	max_dist : float
+		Maximum distance for the upper levels (default is 500 km).
+	idir_upper : str
+		Directory path to the upper levels (default is the current working directory).
+	plotting_maps : boolean
+		Whether to plot the maps (default is False).
+	use_mslp_anomaly : boolean
+		Whether to use the mean sea level pressure anomaly (default is True).
+	custom_mslp_variable : str
+		Name of the mean sea level pressure variable in the custom file (default is an empty string).
+	custom_latitude_var : str
+		Name of the latitude variable in the custom file (default is an empty string).
+	custom_longitude_var : str
+		Name of the longitude variable in the custom file (default is an empty string).
+	custom_uwind_variable : str
+		Name of the u-wind variable in the custom file (default is an empty string).
+	custom_vwind_variable : str
+		Name of the v-wind variable in the custom file (default is an empty string).
+	custom_terrain_high_filename : str
+		Name of the file with the terrain height (default is an empty string).
+	custom_terrain_high_var_name : str
+		Name of the variable with the terrain height (default is an empty string).
+	era_date_file_name : str
+		Name of the ERA5 date file (default is an empty string).
+	custom_geopotential_var_name : str
+		Name of the geopotential variable in the custom file (default is an empty string).
+	custom_upper_level_variable_name : str
+		Name of the variable for the upper levels in the custom file (default is an empty string).
+	custom_date_file_name : str
+		Name of the custom date file (default is an empty string).
+	source_upperprefix : str
+		Prefix of the file name for the upper levels (default is an empty string).
+
+
+	Returns
+	-------
+	None
+	"""
 	if terrain_filter>0:
 		if source.upper()=="ERA5":
 			hgt_file=get_era5_hgtfile()
@@ -2021,6 +2997,23 @@ def tracker_cyclones(cyclone_type="",
 
 
 def compute_dx_dy(lons=np.array(None),lats=np.array(None)):
+	"""
+	Compute the distances between grid points in the latitude and longitude arrays.
+
+	Parameters
+	----------
+	lons : numpy.ndarray
+		Array of longitudes in degrees.
+	lats : numpy.ndarray
+		Array of latitudes in degrees.
+
+	Returns
+	-------
+	tuple
+		A tuple containing two numpy.ndarrays:
+		- dx: Distance between adjacent longitude points in meters.
+		- dy: Distance between adjacent latitude points in meters.
+	"""
 	dy=np.empty_like(lons)
 	dy=dy[:-1,:]
 	dy[:]=0
@@ -2057,6 +3050,25 @@ def compute_dx_dy(lons=np.array(None),lats=np.array(None)):
 
 def create_map(search_limits=[None, None, None, None], 
 			 search_region="",):
+	"""
+	Create a cartopy map object with a given extent and grid lines.
+
+	Parameters
+	----------
+	search_limits : list of float
+		The limits of the region to search for the MSLP anomaly
+		(default is [None, None, None, None]).
+	search_region : str
+		The name of the region to search for the MSLP anomaly (default is an empty string).
+
+	Returns
+	-------
+	tuple
+		A tuple containing two elements:
+		- mapa: A cartopy map object.
+		- crs: The coordinate reference system (CRS) of the map.
+
+	"""
 	from cartopy import config
 	from cartopy.util import add_cyclic_point
 	import cartopy.feature as cfeature
@@ -2123,6 +3135,34 @@ def plotting_mslp_anomaly(sourcelons=np.array([None]),
 	
 	
 		
+	"""
+	Plots the MSLP anomaly with respect to the mean sea level pressure, overlapped with the contours of the MSLP and the position of the TC center.
+
+	Parameters
+	----------
+	sourcelons : numpy.ndarray
+		The array of longitudes of the MSLP grid.
+	sourcelats : numpy.ndarray
+		The array of latitudes of the MSLP grid.
+	mslp : numpy.ndarray
+		The array of MSLP values.
+	mslp_anomaly : numpy.ndarray
+		The array of MSLP anomalies.
+	search_limits : list
+		The list of search limits [minlon, minlat, maxlon, maxlat].
+	cenlons : numpy.ndarray
+		The array of longitudes of the TC center.
+	cenlats : numpy.ndarray
+		The array of latitudes of the TC center.
+	search_region : str
+		The name of the region to search for the TC center.
+	fname : str
+		The name of the output file.
+
+	Returns
+	-------
+	None
+	"""
 	plt.figure(figsize=(18,12))
 	
 	mapa,crs=create_map(search_limits=search_limits, search_region=search_region)
@@ -2144,6 +3184,29 @@ def plotting_mslp_anomaly(sourcelons=np.array([None]),
 
 def first_derivative(f, axis=None, x=None, delta=None):
     
+	"""
+	Compute the first derivative of a function at each point.
+
+	Parameters
+	----------
+	f : array_like
+		The input array.
+	axis : int, optional
+		The axis along which to take the derivative. If None, the derivative is taken along the flatten array.
+	x : array_like, optional
+		The coordinates of the values in `f`. If None, the coordinates are assumed to be equally spaced.
+	delta : array_like, optional
+		The spacing between the coordinates in `x`. If None, the spacing is assumed to be one.
+
+	Returns
+	-------
+	derivative : array_like
+		The first derivative of `f` at each point.
+
+	Notes
+	-----
+	This function computes the centered difference of the input array.
+	"""
 	n, axis, delta = _process_deriv_args(f, axis, x, delta)
 	take = make_take(n, axis)
 
@@ -2189,6 +3252,29 @@ def first_derivative(f, axis=None, x=None, delta=None):
 
 def _process_deriv_args(f, axis, x, delta):
    
+	"""
+	Process arguments for derivative function.
+
+	Parameters
+	----------
+	f : array_like
+		The input array.
+	axis : int, optional
+		The axis along which to take the derivative. If None, the derivative is taken along the flatten array.
+	x : array_like, optional
+		The coordinates of the values in `f`. If None, the coordinates are assumed to be equally spaced.
+	delta : array_like, optional
+		The spacing between the coordinates in `x`. If None, the spacing is assumed to be one.
+
+	Returns
+	-------
+	n : int
+		The number of dimensions in `f`.
+	axis : int
+		The axis along which to take the derivative.
+	delta : array_like
+		The spacing between the coordinates in `x`.
+	"""
 	n = f.ndim
 	axis = normalize_axis_index(axis if axis is not None else 0, n)
 
@@ -2217,16 +3303,66 @@ def _process_deriv_args(f, axis, x, delta):
 
 def calc_vorticity(u, v, dx=None, dy=None, x_dim=-1, y_dim=-2):
     
-    dudy = first_derivative(u, delta=dy, axis=y_dim)
-    dvdx = first_derivative(v, delta=dx, axis=x_dim)
-    return dvdx - dudy
+	"""
+	Calculate vorticity from u and v wind components.
+
+	Parameters
+	----------
+	u, v : array_like
+		The u and v wind components.
+	dx, dy : array_like, optional
+		The grid spacings in the x and y directions.  If not provided, they are
+		assumed to be 1.
+	x_dim, y_dim : int, optional
+		The dimensions corresponding to the x and y directions.  By default,
+		the last two dimensions are used.
+
+	Returns
+	-------
+	vorticity : array_like
+		The vorticity of the flow.
+
+	Notes
+	-----
+	The vorticity is defined as the curl of the velocity field, which is
+	computed as the difference between the y-derivative of the u component and
+	the x-derivative of the v component.
+
+	"""
+	dudy = first_derivative(u, delta=dy, axis=y_dim)
+	dvdx = first_derivative(v, delta=dx, axis=x_dim)
+	return dvdx - dudy
 
 def _broadcast_to_axis(arr, axis, ndim):
-    if arr.ndim == 1 and arr.ndim < ndim:
-        new_shape = [1] * ndim
-        new_shape[axis] = arr.size
-        arr = arr.reshape(*new_shape)
-    return arr
+	"""
+	Broadcasts an array to a given axis of a given number of dimensions.
+
+	Parameters
+	----------
+	arr : array_like
+		The array to be broadcasted.
+	axis : int
+		The axis of the array to be broadcasted.
+	ndim : int
+		The number of dimensions of the array.
+
+	Returns
+	-------
+	broadcasted : array_like
+		The array broadcasted to the specified axis.
+
+	Notes
+	-----
+	This function is used to broadcast a 1D array to a given axis of a higher
+	dimensional array.  The input array is reshaped to have the same number of
+	dimensions as the output array, and then broadcasted to the specified axis.
+
+	"""
+	if arr.ndim == 1 and arr.ndim < ndim:
+		new_shape = [1] * ndim
+		new_shape[axis] = arr.size
+		arr = arr.reshape(*new_shape)
+	return arr
 
 def make_take(ndims, slice_dim):
     def take(indexer):
@@ -2236,6 +3372,25 @@ def make_take(ndims, slice_dim):
 
 
 def compute_grid_distance(lats=np.array(None),lons=np.array(None),latc=None,lonc=None):
+	"""
+	Compute the distance between a grid point and a center point.
+
+	Parameters
+	----------
+	lats : numpy array
+		Array of latitudes in degrees.
+	lons : numpy array
+		Array of longitudes in degrees.
+	latc : float
+		Latitude of the center point in degrees.
+	lonc : float
+		Longitude of the center point in degrees.
+
+	Returns
+	-------
+	dist : numpy array
+		Array with the distances between the grid points and the center point in meters.
+	"""
 	dist=np.empty_like(lats)
 	
 	if lonc>180:
@@ -2266,9 +3421,55 @@ def filter_centers(lats=np.array(None),
 			ff=np.array([None]),
 			outer_r=np.array([None]),
 			filter_center_threshold=1000):
+	
+	"""
+	Filter cyclone centers based on proximity and minimum pressure.
 
-	
-	
+	Parameters
+	----------
+	lats : numpy array
+		Array of latitudes of the cyclone centers.
+	lons : numpy array
+		Array of longitudes of the cyclone centers.
+	roci : numpy array
+		Array of radii of the outermost closed isobar for each center.
+	pmin : numpy array
+		Array of minimum sea-level pressures for each center.
+	closedp : numpy array
+		Array indicating whether a closed pressure is detected for each center.
+	ff : numpy array, optional
+		Array of  wind speed. Defaults to an empty array.
+	outer_r : numpy array, optional
+		Array of outer radii. Defaults to an empty array.
+	filter_center_threshold : float, optional
+		Maximum distance in meters to consider centers as duplicates. Default is 1000.
+
+	Returns
+	-------
+	flats : numpy array
+		Filtered array of latitudes.
+	flons : numpy array
+		Filtered array of longitudes.
+	froci : numpy array
+		Filtered array of radii of the outermost closed isobar.
+	fpmin : numpy array
+		Filtered array of minimum pressures.
+	fclosedp : numpy array
+		Filtered array indicating closed pressures.
+	fmws : numpy array
+		Filtered array of measurements (e.g., wind speed).
+	fouter_r : numpy array
+		Filtered array of outer radii.
+	centers_found : bool
+		Indicator whether centers were found.
+
+	Notes
+	-----
+	This function eliminates duplicate cyclone centers by comparing distances
+	and selecting the center with the lowest minimum pressure within a specified
+	threshold. It returns the filtered set of centers and a flag indicating whether
+	any centers were found.
+	"""
 	if len(lats)>0:
 		if ff[0]==None:
 			ff=np.empty_like(lons)
@@ -2372,6 +3573,27 @@ def filter_centers(lats=np.array(None),
 
 
 def get_wrf_mslp(idir="./",wrffile="",variables=[""]):
+	"""
+	Retrieve mean sea level pressure (MSLP) data from a WRF file.
+
+	Parameters
+	----------
+	idir : str, optional
+		Directory path to the WRF file (default is the current working directory).
+	wrffile : str, optional
+		Name of the WRF file (default is an empty string).
+	variables : list of str, optional
+		List of variables to be retrieved from the WRF file (default is an empty list).
+
+	Returns
+	-------
+	wrflat : numpy array
+		Latitude data.
+	wrflon : numpy array
+		Longitude data.
+	wrfmslp : numpy array
+		Mean sea level pressure data.
+	"""
 	ncwrffile=Dataset(idir+"/"+wrffile)
 
 	dimNx=ncwrffile.dimensions['west_east'].size
@@ -2393,6 +3615,27 @@ def get_wrf_mslp(idir="./",wrffile="",variables=[""]):
 
 
 def get_wrf_mslp_new(idir="./",wrffile="",variables=[""]):
+	"""
+	Retrieve mean sea level pressure (MSLP) data from a WRF file.
+
+	Parameters
+	----------
+	idir : str, optional
+		Directory path to the WRF file (default is the current working directory).
+	wrffile : str, optional
+		Name of the WRF file (default is an empty string).
+	variables : list of str, optional
+		List of variables to be retrieved from the WRF file (default is an empty list).
+
+	Returns
+	-------
+	wrflat : numpy array
+		Latitude data.
+	wrflon : numpy array
+		Longitude data.
+	wrfmslp : numpy array
+		Mean sea level pressure data.
+	"""
 	ncwrffile=Dataset(idir+"/"+wrffile)
 
 	dimNx=ncwrffile.dimensions['west_east'].size
@@ -2415,6 +3658,36 @@ def get_wrf_mslp_new(idir="./",wrffile="",variables=[""]):
 
 
 def slp(PB=np.array(None), P=np.array(None), PHB=np.array(None), PH=np.array(None), T=np.array(None), QVAPOR=np.array(None), TBASE=300.0):
+	"""
+	Compute mean sea level pressure (MSLP) from WRF data.
+
+	Parameters
+	----------
+	PB : numpy array
+		Base pressure.
+	P : numpy array
+		Pressure.
+	PHB : numpy array
+		Base geopotential.
+	PH : numpy array
+		Geopotential.
+	T : numpy array
+		Temperature.
+	QVAPOR : numpy array
+		Water vapor mixing ratio.
+	TBASE : float, optional
+		Base temperature (default is 300.0).
+
+	Returns
+	-------
+	mslp : numpy array
+		Mean sea level pressure in hPa.
+
+	Notes
+	-----
+	This function is based on the WRF-POST routine `slp`.
+
+	"""
 	ptot = P + PB
 	t = (TBASE+T) * (ptot/100000.) ** (287.04/1004.)
 	# compute geopotential
@@ -2475,25 +3748,70 @@ def slp(PB=np.array(None), P=np.array(None), PHB=np.array(None), PH=np.array(Non
 
 
 def interp_levels(x, y, levels):
-    shp = y.shape
+	"""
+	Interpolates the input data `y` at specified `levels` along the first axis.
 
-    x = np.reshape(x, [shp[0],-1]).T
-    y = np.reshape(y, [shp[0],-1]).T
-    
-    new_shape = (len(y), len(levels))
+	This function reshapes the input arrays `x` and `y`, interpolates the
+	values of `y` at given `levels`, and returns the interpolated values
+	reshaped to match the original dimensions.
 
-    values = np.empty( new_shape )
+	Parameters
+	----------
+	x : numpy.ndarray
+		The input x-coordinates array. Must be of the same shape as `y`.
+	y : numpy.ndarray
+		The input y-values array that needs to be interpolated.
+	levels : array-like
+		The target x-coordinates at which interpolation is performed.
+
+	Returns
+	-------
+	numpy.ndarray
+		The interpolated values of `y` at `levels`, reshaped to match
+		the original dimensions of `y`.
+	"""
+	shp = y.shape
+
+	x = np.reshape(x, [shp[0],-1]).T
+	y = np.reshape(y, [shp[0],-1]).T
     
-    for i, (xo, yo) in enumerate(zip(x, y)):
-        interp_mod = interp1d(xo, yo, fill_value='extrapolate', axis=0)
-        values[i] = interp_mod(levels)
-    var_levels=values.T.reshape( new_shape[1:] + shp[1:])
-    return var_levels
+	new_shape = (len(y), len(levels))
+
+	values = np.empty( new_shape )
+
+	for i, (xo, yo) in enumerate(zip(x, y)):
+		interp_mod = interp1d(xo, yo, fill_value='extrapolate', axis=0)
+		values[i] = interp_mod(levels)
+	var_levels=values.T.reshape( new_shape[1:] + shp[1:])
+	return var_levels
 
 
 
 def interpolate_to_non_staggered_sigma_levels(non_staggered, staggered, matrix):
-	
+
+	"""
+	Interpolates a 3D matrix from staggered to non-staggered sigma levels.
+
+	This function takes a 3D matrix defined on staggered sigma levels and
+	interpolates it to non-staggered sigma levels. The interpolation is 
+	performed along the first dimension of the matrix.
+
+	Parameters
+	----------
+	non_staggered : array-like
+		The target non-staggered sigma levels for interpolation.
+	staggered : array-like
+		The original staggered sigma levels corresponding to the matrix.
+	matrix : numpy.ndarray
+		The 3D matrix to be interpolated, with dimensions corresponding
+		to staggered levels, and two spatial dimensions.
+
+	Returns
+	-------
+	numpy.ndarray
+		A new 3D matrix interpolated to the non-staggered sigma levels,
+		with the same spatial dimensions as the input matrix.
+	"""
 	new_matrix=np.empty((len(non_staggered), matrix.shape[1], matrix.shape[2]))
 	new_matrix[:,:,:]=0
 	for i in range(0, matrix.shape[1]):
@@ -2514,6 +3832,32 @@ def get_wrf_uppervar(idir="./",
 					 wrffile="",
 					 variables=[""],
 					 plevels=np.array([None])):
+	"""
+	Retrieve upper level variables from a WRF file.
+
+	Parameters
+	----------
+	idir : str, optional
+		Directory path to the WRF file (default is the current working directory).
+	wrffile : str, optional
+		Name of the WRF file (default is an empty string).
+	variables : list of str, optional
+		List of variables to be retrieved from the WRF file (default is an empty list).
+	plevels : numpy array, optional
+		Pressure levels at which the variables are interpolated (default is an empty array,
+		which is filled with a default set of pressure levels).
+
+	Returns
+	-------
+	wrflat : numpy array
+		Latitude data.
+	wrflon : numpy array
+		Longitude data.
+	var : numpy array
+		Interpolated variable data at the specified pressure levels.
+	plevels : numpy array
+		Pressure levels at which the variables are interpolated.
+	"""
 	ncwrffile=Dataset(idir+"/"+wrffile)
 	dimNx=ncwrffile.dimensions['west_east'].size
 	dimNy=ncwrffile.dimensions['south_north'].size
@@ -2554,6 +3898,25 @@ def get_wrf_uppervar(idir="./",
 
 
 def compute_mslp(psfc=np.array(None),T2=np.array(None),phb=np.array(None),ph=np.array(None)):
+	"""
+	Compute mean sea level pressure from WRF data.
+
+	Parameters
+	----------
+	psfc : numpy array
+		Surface pressure in Pa.
+	T2 : numpy array
+		Surface temperature in K.
+	phb : numpy array
+		Base geopotential height in m.
+	ph : numpy array
+		Geopotential height in m.
+
+	Returns
+	-------
+	mslp : numpy array
+		Mean sea level pressure in hPa.
+	"""
 	Rd=287.5
 	gamma=0.00065
 	g=9.8 
@@ -2574,6 +3937,31 @@ def compute_mslp(psfc=np.array(None),T2=np.array(None),phb=np.array(None),ph=np.
 
 def calc_relvort(u=np.array([None]), v=np.array([None]), lon=np.array([None]), lat=np.array([None])):
 
+	"""
+	Calculate relative vorticity from u and v wind components on a latitude-longitude grid.
+
+	Parameters
+	----------
+	u : numpy.ndarray
+		Zonal wind component (east-west) in m/s.
+	v : numpy.ndarray
+		Meridional wind component (north-south) in m/s.
+	lon : numpy.ndarray
+		2D array of longitudes in degrees.
+	lat : numpy.ndarray
+		2D array of latitudes in degrees.
+
+	Returns
+	-------
+	numpy.ndarray
+		Relative vorticity calculated from the wind components, in s^-1.
+
+	Notes
+	-----
+	The relative vorticity is computed as the difference between the x-derivative
+	of the v component and the y-derivative of the u component. The calculation
+	accounts for the Earth's curvature by using latitude-dependent scaling factors.
+	"""
 	pi = math.pi;
 	pid = pi/180.;
 	R_earth = 6371200.;
@@ -2612,6 +4000,44 @@ def calc_relvort(u=np.array([None]), v=np.array([None]), lon=np.array([None]), l
 
 
 def get_maxmin_mslp_points(lats=np.array([None]), lons=np.array([None]),  mslp=np.array([None]), mslp_anomaly=np.array([None]), hgt_field=np.array([None]), rel_vort=np.array([None]), extrema="min", nsize=25):
+	"""
+	Get the locations of the minimum points of the MSLP field.
+
+	Parameters
+	----------
+	lats : numpy array
+		Array of latitudes.
+	lons : numpy array
+		Array of longitudes.
+	mslp : numpy array
+		Array of mean sea level pressure values.
+	mslp_anomaly : numpy array
+		Array of mean sea level pressure anomaly values.
+	hgt_field : numpy array
+		Array of terrain height values.
+	rel_vort : numpy array
+		Array of relative vorticity values.
+	extrema : str
+		"min" or "max", indicating whether to look for minima or maxima.
+	nsize : int
+		Size of the neighbourhood for the minimum_filter function.
+
+	Returns
+	-------
+	nlats : numpy array
+		Array of latitudes of the min/max points.
+	nlons : numpy array
+		Array of longitudes of the min/max points.
+	nmslp : numpy array
+		Array of mean sea level pressure values at the min/max points.
+	nmslp_anoms : numpy array
+		Array of mean sea level pressure anomaly values at the min/max points.
+	nterrain : numpy array
+		Array of terrain height values at the min/max points.
+	nrelvort : numpy array
+		Array of relative vorticity values at the min/max points.
+
+	"""
 	data_ext = minimum_filter(mslp, nsize, mode='nearest')
 	mxy, mxx = np.where(data_ext == mslp)
 
@@ -2667,6 +4093,92 @@ def get_low_centers(lats=np.array([None]),
 		radius_for_msw=100):
 
 
+	"""
+	Get the positions of low centers based on a set of parameters.
+
+	Parameters
+	----------
+	lats : numpy array
+		latitudes of the grid points
+	lons : numpy array
+		longitudes of the grid points
+	mslp : numpy array
+		means sea level pressure at each grid point
+	mslp_anomaly : numpy array
+		anomaly of mean sea level pressure at each grid point
+	mslp_anomaly_threshold : float
+		threshold for the anomaly of mean sea level pressure
+	use_mslp_anomaly : bool
+		if True, use the anomaly of mean sea level pressure to filter the low centers
+	model_res : int
+		resolution of the model (in km)
+	search_limits : list of floats
+		limit of the search region (in degrees)
+	rout : int
+		radius of the search region (in km)
+	dr_res : int
+		resolution of the search region (in km)
+	d_ang : float
+		angular resolution of the search region (in degrees)
+	critical_outer_radius : int
+		critical outer radius for the low center to be considered a cyclone (in km)
+	min_slp_threshold : float
+		minimum sea level pressure threshold for the low center to be considered a cyclone
+	terrain_filter : int
+		filter for the terrain height (in meters)
+	hgt_field : numpy array
+		terrain height at each grid point
+	sourcefile : str
+		name of the source file
+	idir : str
+		path to the source file
+	varu : str
+		name of the u-wind variable
+	varv : str
+		name of the v-wind variable
+	varlat : str
+		name of the latitude variable
+	varlon : str
+		name of the longitude variable
+	source : str
+		name of the source (e.g. ERA5, WRF)
+	search_region : str
+		name of the search region (e.g. SA, SH, SI, SP)
+	max_wind_speed_threshold : float
+		maximum wind speed threshold for the low center to be considered a cyclone
+	outer_wind_speed_threshold : float
+		threshold for the outer wind speed (in m/s)
+	dx : int
+		angular resolution of the grid (in degrees)
+	dy : int
+		angular resolution of the grid (in degrees)
+	vorticity_threshold : float
+		threshold for the relative vorticity (in s^-1)
+	great_circle_distance : float
+		great circle distance (in km)
+	dmslp_great_circle_distance : float
+		great circle distance for the mean sea level pressure anomaly (in km)
+	radius_for_msw : int
+		radius for the maximum sustained wind (in km)
+
+	Returns
+	-------
+	center_lats : numpy array
+		latitudes of the low centers
+	center_lons : numpy array
+		longitudes of the low centers
+	outer_r : numpy array
+		radii of the outer wind speed
+	mcp : numpy array
+		minimum central pressures
+	mws : numpy array
+		maximum sustained winds
+	outer_p : numpy array
+		outer pressures
+	croci : numpy array
+		relative vorticities
+
+	"""
 	center_lats=[]
 	center_lons=[]
 	outer_r=[]
@@ -2882,6 +4394,26 @@ def get_low_centers(lats=np.array([None]),
 
 def haversine(lon1, lat1, lon2, lat2):
 	# convert decimal degrees to radians 
+	"""
+	Calculate the great circle distance between two points 
+	on the earth (specified in decimal degrees)
+
+	Parameters
+	----------
+	lon1 : float
+		Longitude of the first point
+	lat1 : float
+		Latitude of the first point
+	lon2 : float
+		Longitude of the second point
+	lat2 : float
+		Latitude of the second point
+
+	Returns
+	-------
+	distance : float
+		Great circle distance in kilometers
+	"""
 	lon1 = np.deg2rad(lon1)
 	lon2 = np.deg2rad(lon2)
 	lat1 = np.deg2rad(lat1)
@@ -2899,6 +4431,26 @@ def haversine(lon1, lat1, lon2, lat2):
 
 def get_GCD(lon1, lat1, lonc, latc):	
 
+	"""
+	Calculate the great circle distance between two points 
+	on the earth (specified in decimal degrees)
+
+	Parameters
+	----------
+	lon1 : float
+		Longitude of the first point
+	lat1 : float
+		Latitude of the first point
+	lonc : float
+		Longitude of the second point
+	latc : float
+		Latitude of the second point
+
+	Returns
+	-------
+	distance : float
+		Great circle distance in kilometers
+	"""
 	r = 6371
 	radlatc=latc*np.pi/180
 	radlonc=lonc*np.pi/180
@@ -2916,6 +4468,33 @@ def get_GCD(lon1, lat1, lonc, latc):
 
 def get_cyclone_phase(VTU=[None],VTL=[None],B=[None]):
 	
+	"""
+	Get the phase of the cyclone given the VTU, VTL and B parameters.
+
+	Parameters
+	----------
+	VTU : list
+		Vertical tilt of the upper level
+	VTL : list
+		Vertical tilt of the lower level
+	B : list
+		B parameter
+
+	Returns
+	-------
+	cyclone_phase : list
+		Phase of the cyclone. The possible phases are:
+		SDWC: Symmetric deep warm core
+		SDCC: Symmetric deep cold core
+		SLWC: Symmetric low warm core
+		SLCC: Symmetric low cold core
+		ADWC: Asymmetric deep warm core
+		ADCC: Asymmetric deep cold core
+		ALWC: Asymmetric low warm core
+		ALCC: Asymmetric low cold core
+		UDCC: Undefined cyclone core
+
+	"""
 	cyclone_phase=[]
 	
 	for i in range(0,len(VTU)-1):
@@ -2963,6 +4542,36 @@ def get_cyclone_type(VTU=None,
 					 VTU_threshold=0,
 					 Bhart_threshold=10,):
 	
+	"""
+	Determines the type of cyclone based on the VTU, VTL and B parameters.
+
+	Parameters
+	----------
+	VTU : list
+		Upper-level temperature anomaly
+	VTL : list
+		Lower-level temperature anomaly
+	B : list
+		B parameter (asymmetric parameter)
+	cyclone_type : str
+		Type of cyclone (TC, TLC, EC, MC, SC)
+	core_criteria_length : int
+		Length of the criteria for the cyclone core
+	dt_h : int
+		Time step in hours
+	VTL_threshold : float
+		Threshold for the lower-level temperature anomaly
+	VTU_threshold : float
+		Threshold for the upper-level temperature anomaly
+	Bhart_threshold : float
+		Threshold for the B parameter
+
+	Returns
+	-------
+	boolean
+		True if the cyclone type is satisfied, False otherwise
+
+	"""
 	if cyclone_type.upper()=="TC":
 		cont=0
 
@@ -3063,6 +4672,49 @@ def compute_dmslp(latc=None,
 				):
 
 
+	"""
+	Compute the mean sea level pressure (MSLP) difference between the storm center and a circular ring with a given radius.
+
+	Parameters
+	----------
+	latc : float
+		Latitude of the storm center.
+	lonc : float
+		Longitude of the storm center.
+	lats : numpy array
+		Array of latitudes of the grid.
+	lons : numpy array
+		Array of longitudes of the grid.
+	mslp : numpy array
+		Array of MSLP values.
+	pmin : float
+		Minimum MSLP value to consider.
+	dang : int
+		Angular distance between two consecutive points in the circular ring.
+	dradius : int
+		Radial distance between two consecutive points in the circular ring.
+	search_radius : int
+		Radius of the circular ring to search for the minimum MSLP value.
+	model_res : int
+		Resolution of the model.
+	great_circle_distance : int
+		Radius of the circular ring to exclude from the computation of the MSLP difference.
+	filter_center_threshold : int
+		Threshold for the MSLP difference to exclude points from the computation of the MSLP difference.
+	search_limits : list of float
+		The limits of the region to search for the minimum MSLP value.
+
+	Returns
+	-------
+	float
+		The MSLP difference between the storm center and the circular ring.
+	float
+		The latitude of the storm center.
+	float
+		The longitude of the storm center.
+	float
+		The minimum MSLP value.
+	"""
 	distance=haversine(lon1=lons, lat1=lats, lon2=lonc, lat2=latc)
 
 
@@ -3150,6 +4802,47 @@ def relocate_critical_centres(latc=None,
 							search_limits=[None,None,None,None]):
 
 	
+	"""
+	Relocate the critical centers to the minimum MSLP value within a circular ring.
+
+	Parameters
+	----------
+	latc : float
+		Latitude of the storm center.
+	lonc : float
+		Longitude of the storm center.
+	lats : numpy array
+		Array of latitudes of the grid.
+	lons : numpy array
+		Array of longitudes of the grid.
+	mslp : numpy array
+		Array of MSLP values.
+	pmin : float
+		Minimum MSLP value to consider.
+	dang : int
+		Angular distance between two consecutive points in the circular ring.
+	dradius : int
+		Radial distance between two consecutive points in the circular ring.
+	search_radius : int
+		Radius of the circular ring to search for the minimum MSLP value.
+	model_res : int
+		Resolution of the model.
+	great_circle_distance : int
+		Radius of the circular ring to exclude from the computation of the MSLP difference.
+	filter_center_threshold : int
+		Threshold for the MSLP difference to exclude points from the computation of the MSLP difference.
+	search_limits : list of float
+		The limits of the region to search for the minimum MSLP value.
+
+	Returns
+	-------
+	float
+		The minimum MSLP value.
+	float
+		The latitude of the storm center.
+	float
+		The longitude of the storm center.
+	"""
 	latp,lonp,radius,theta=polar_cords(latc=latc,
 					lonc=lonc,
 					dth=math.radians(dang),
@@ -3196,6 +4889,39 @@ def compute_TC_size(latc=None,
 		outer_wind_speed_threshold=2.5
 		):
 	
+	"""
+	Compute the size of a tropical cyclone, given as the mean distance from the center to the outermost closed wind speed contour.
+
+	Parameters
+	----------
+	latc : float
+		Latitude of the cyclone center.
+	lonc : float
+		Longitude of the cyclone center.
+	lats : numpy array
+		Array of latitudes of the grid.
+	lons : numpy array
+		Array of longitudes of the grid.
+	u : numpy array
+		Array of u-wind components.
+	v : numpy array
+		Array of v-wind components.
+	dradius : int
+		Angular distance between two consecutive points in the circular ring.
+	dang : int
+		Radial distance between two consecutive points in the circular ring.
+	search_radius : int
+		Radius of the circular ring to search for the minimum wind speed.
+	model_res : int
+		Resolution of the model.
+	outer_wind_speed_threshold : float
+		Wind speed threshold to consider as the outermost closed wind speed contour.
+
+	Returns
+	-------
+	float
+		Size of the tropical cyclone.
+	"""
 	latp,lonp,radius,theta=polar_cords(latc=latc,
 					lonc=lonc,
 					dth=math.radians(dang),
@@ -3279,6 +5005,41 @@ def compute_roci_RU(latc=None,
 		model_res=20):
 
 	
+	"""
+	Compute the radius of the outermost closed isobar (ROCI) for a cyclone using the algorithm developed by Ruopp et al. (2008).
+
+	Parameters
+	----------
+
+	latc : float
+		Latitude of the cyclone center.
+	lonc : float
+		Longitude of the cyclone center.
+	lats : numpy array
+		Array of latitudes of the grid points.
+	lons : numpy array
+		Array of longitudes of the grid points.
+	mslp : numpy array
+		Array of mean sea level pressure values.
+	pmin : float
+		Minimum mean sea level pressure value.
+	dang : int
+		Angular distance between two consecutive points in the circular ring.
+	dradius : int
+		Radial distance between two consecutive points in the circular ring.
+	search_radius : int
+		Radius of the circular ring to search for the minimum mean sea level pressure value.
+	model_res : int
+		Resolution of the model.
+
+	Returns
+	-------
+
+	roci : float
+		Radius of the outermost closed isobar.
+	closedp : float
+		Pressure value of the outermost closed isobar.
+	"""
 	outerp=900
 	outerp_found=False
 	while outerp<pmin:
@@ -3384,6 +5145,33 @@ def compute_roci_RU(latc=None,
 
 
 def polar_cords(latc=None,lonc=None,dth=np.pi/256,dr=0.5,search_radius=2000):
+	"""
+	Generate polar coordinates (latitude and longitude arrays) for a given center point.
+
+	Parameters
+	----------
+	latc : float, optional
+		Latitude of the center point (default is None).
+	lonc : float, optional
+		Longitude of the center point (default is None).
+	dth : float, optional
+		Angular step in radians for theta (default is np.pi/256).
+	dr : float, optional
+		Radial step in kilometers for radius (default is 0.5).
+	search_radius : int, optional
+		Maximum search radius in kilometers (default is 2000).
+
+	Returns
+	-------
+	lat : numpy.ndarray
+		Array of latitudes in polar coordinates.
+	lon : numpy.ndarray
+		Array of longitudes in polar coordinates.
+	radius : numpy.ndarray
+		Array of radial distances in kilometers from the center point.
+	theta : numpy.ndarray
+		Array of angular coordinates in radians.
+	"""
 	theta=np.arange(0,2*np.pi+dth,dth)
 	radius=np.arange(0,search_radius+dr,dr)
 	lat=np.empty((len(theta),len(radius)))
@@ -3398,6 +5186,23 @@ def polar_cords(latc=None,lonc=None,dth=np.pi/256,dr=0.5,search_radius=2000):
 	return lat,lon,radius,theta
 
 def calc_area(a=0,b=0,ang=0):
+	"""
+	Calculate the area of a triangle given the length of two sides and the angle between them.
+
+	Parameters
+	----------
+	a : float, optional
+		Length of side a (default is 0).
+	b : float, optional
+		Length of side b (default is 0).
+	ang : float, optional
+		Angle between sides a and b in radians (default is 0).
+
+	Returns
+	-------
+	A : float
+		The area of the triangle.
+	"""
 	A=(a*b*np.sin(ang))/2
 
 	return A
@@ -3405,6 +5210,25 @@ def calc_area(a=0,b=0,ang=0):
 
 def geo_distance(lat1=None, lon1=None, lat2=None, lon2=None):
 	
+	"""
+	Calculate the great circle distance between two points on the earth (specified in decimal degrees)
+	
+	Parameters
+	----------
+	lat1 : float
+		latitude of the first point
+	lon1 : float
+		longitude of the first point
+	lat2 : float
+		latitude of the second point
+	lon2 : float
+		longitude of the second point
+	
+	Returns
+	-------
+	distance : float
+		great circle distance in kilometers
+	"""
 	EARTHRADIUS = 6371 
 	lat1 = 90 - lat1
 	lat2 = 90 - lat2
@@ -3433,6 +5257,20 @@ def geo_distance(lat1=None, lon1=None, lat2=None, lon2=None):
 	return dist
 
 def tmp_data_loadt(data_file):
+	"""
+	Load data from a file and return it as a numpy array.
+
+	Parameters
+	----------
+	data_file : str
+		Path to the file containing the data to be loaded.
+
+	Returns
+	-------
+	data : numpy.ndarray
+		Numpy array containing the loaded data. If the file contains only one line,
+		the data is reshaped to be a 2D array with one row.
+	"""
 	data=np.loadtxt(data_file)
 	
 	tdata=open(data_file)
@@ -3444,6 +5282,25 @@ def tmp_data_loadt(data_file):
 	return data
 
 def get_bearing_old(lat1, lon1, lat2, lon2):
+	"""
+	Calculate the initial bearing (forward azimuth) between two points on the earth's surface.
+
+	Parameters
+	----------
+	lat1 : float
+		Latitude of the first point in decimal degrees.
+	lon1 : float
+		Longitude of the first point in decimal degrees.
+	lat2 : float
+		Latitude of the second point in decimal degrees.
+	lon2 : float
+		Longitude of the second point in decimal degrees.
+
+	Returns
+	-------
+	brng : float
+		Initial bearing in degrees from the first point to the second point, measured clockwise from north.
+	"""
 	dLon = (lon2 - lon1)
 	x = math.cos(math.radians(lat2)) * math.sin(math.radians(dLon))
 	y = math.cos(math.radians(lat1)) * math.sin(math.radians(lat2)) - math.sin(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.cos(math.radians(dLon))
@@ -3454,6 +5311,25 @@ def get_bearing_old(lat1, lon1, lat2, lon2):
 
 
 def get_bearing(lat1, lon1, lat2, lon2):
+	"""
+	Calculate the initial bearing (forward azimuth) between two points on the earth's surface.
+
+	Parameters
+	----------
+	lat1 : float
+		Latitude of the first point in decimal degrees.
+	lon1 : float
+		Longitude of the first point in decimal degrees.
+	lat2 : float
+		Latitude of the second point in decimal degrees.
+	lon2 : float
+		Longitude of the second point in decimal degrees.
+
+	Returns
+	-------
+	brng : float
+		Initial bearing in degrees from the first point to the second point, measured clockwise from north.
+	"""
 	lat1 = np.pi*lat1/180
 	lat2 = np.pi*lat2/180
 	
@@ -3485,6 +5361,42 @@ def compute_VT_series(dates=np.array([None]),
 					):
 	
 	
+	"""
+	Compute the thermal wind series (VTL and VTU) for a set of locations and pressure levels.
+
+	Parameters
+	----------
+	dates : numpy.ndarray
+		Array of dates for the data.
+	hours : numpy.ndarray
+		Array of hours corresponding to each date.
+	listlev1 : numpy.ndarray
+		Array of lower pressure levels to compute the VTL series.
+	listlev2 : numpy.ndarray
+		Array of upper pressure levels to compute the VTU series.
+	liste_lat : numpy.ndarray
+		Array of latitudes for the center points.
+	liste_lon : numpy.ndarray
+		Array of longitudes for the center points.
+	max_dist : int
+		Maximum distance in kilometers for data to be considered in the computation.
+	lats : numpy.ndarray
+		Array of latitudes for grid points.
+	lons : numpy.ndarray
+		Array of longitudes for grid points.
+	levels : numpy.ndarray
+		Array of available pressure levels in the dataset.
+	Zvar : numpy.ndarray
+		Array of geopotential height data for the pressure levels.
+	vtl_vtu_lr : bool
+		Flag to decide whether to use linear regression for VTL/VTU series or not.
+
+	Returns
+	-------
+	tuple
+		If vtl_vtu_lr is True, returns (VTL_series, VTU_series) computed using linear regression.
+		Otherwise, returns (VTL_seriesb, VTU_seriesb) computed using basic difference method.
+	"""
 	listlev11=np.array(listlev1)*100
 	lnP1=np.log(listlev11)
 	listlev22=np.array(listlev2)*100
@@ -3582,6 +5494,35 @@ def compute_Bparameter_hart(cenlats=np.array([None]),
 	#			lons[ix,jx]=lons[ix,jx]-360
 
 
+	"""
+	Computes the B parameter for a given storm track according to Hart (2003).
+
+	Parameters
+	----------
+	cenlats : numpy array
+		Storm track latitudes.
+	cenlons : numpy array
+		Storm track longitudes.
+	max_dist : int
+		Maximum distance in km for the computation.
+	dates : numpy array
+		Array with the dates of the storm track.
+	hours : numpy array
+		Array with the hours of the storm track.
+	lats : numpy array
+		Array with the latitudes of the ERA5 grid.
+	lons : numpy array
+		Array with the longitudes of the ERA5 grid.
+	levels : numpy array
+		Array with the pressure levels of the ERA5 grid.
+	Zvar : numpy array
+		Array with the geopotential height at the respective pressure levels.
+
+	Returns
+	-------
+	B_series : numpy array
+		Array with the B parameter values at each time step.
+	"""
 	ilev_top = list(levels).index(600)
 	ilev_bot = list(levels).index(900)
 
@@ -3683,6 +5624,56 @@ def get_CPS_data(dates=np.array([None]),
 				custom_date_file_name=""
 				):
 
+	"""
+	Get upper levels data from a given source.
+
+	Parameters
+	----------
+	dates : numpy array
+		Array of dates in the format "yyyymmdd".
+	hours : numpy array
+		Array of hours in the format "hh".
+	idir_upper : str
+		Directory with the upper levels data files.
+	source_upperprefix : str
+		Prefix of the upper levels data files.
+	source : str
+		Source of the upper levels data (ERA5, WRF, CUSTOM).
+	era_date_file_name : str
+		Name of the ERA5 date file.
+	search_limits : list
+		List with the limits of the region to be extracted from the upper levels data files.
+		Format is [lat_min, lat_max, lon_min, lon_max].
+	search_region : str
+		Region to be extracted from the upper levels data files. Options are "NA", "SA", "AL", "MS".
+	vtl_vtu_lr : bool
+		Flag to indicate if the upper levels data will be used for the VT, VTU and LR calculations.
+	custom_geopotential_var_name : str
+		Name of the geopotential variable in the CUSTOM data files.
+	custom_upper_level_variable_name : str
+		Name of the upper level variable in the CUSTOM data files.
+	varlat : str
+		Name of the latitude variable in the CUSTOM data files.
+	varlon : str
+		Name of the longitude variable in the CUSTOM data files.
+	custom_date_file_name : str
+		Name of the CUSTOM date file.
+
+	Returns
+	-------
+	sourcelats : numpy array
+		Array with the latitude of the upper levels data.
+	sourcelons : numpy array
+		Array with the longitude of the upper levels data.
+	Zvar : numpy array
+		Array with the upper levels data.
+	source_levels : numpy array
+		Array with the pressure levels of the upper levels data.
+	listlev1 : numpy array
+		Array with the pressure levels of the VT and VTU calculations.
+	listlev2 : numpy array
+		Array with the pressure levels of the LR calculation.
+	"""
 	if vtl_vtu_lr:
 		listlev1=[900,850,800,750,700,650,600]
 		listlev2=[600,550,500,450,400,350,300]
@@ -3836,6 +5827,54 @@ def get_B_series(cenlats=np.array([None]),
 						tmpdir="./"
 						):
 
+	"""
+	Computes the B parameter for a given set of cyclone centers.
+
+	Parameters
+	----------
+	cenlats : array_like
+		Latitudes of the cyclone centers.
+	cenlons : array_like
+		Longitudes of the cyclone centers.
+	dates : array_like
+		Dates of the data in the format "yyyymmdd".
+	hours : array_like
+		Hours of the data in the format "hh".
+	idir_upper : str, optional
+		Directory where upper level data is located (default is "./").
+	source_upperprefix : str, optional
+		Prefix of the upper level data files (default is "").
+	source : str, optional
+		Source of the upper level data (either "ERA5" or "CUSTOM", default is "ERA5").
+	era_date_file_name : str, optional
+		Name of the file containing the dates of the ERA5 data (default is "").
+	search_limits : array_like, optional
+		Limits of the subregion to extract (default is [None, None, None, None]).
+	search_region : str, optional
+		Region to extract (default is "").
+	max_dist : int, optional
+		Maximum distance between the cyclone center and the upper level data (default is 500).
+	vtl_vtu_lr : bool, optional
+		Flag indicating whether to use the lower resolution upper levels (default is False).
+	custom_geopotential_var_name : str, optional
+		Name of the geopotential variable in the custom data (default is "").
+	custom_upper_level_variable_name : str, optional
+		Name of the upper level variable in the custom data (default is "").
+	varlat : str, optional
+		Name of the latitude variable in the custom data (default is "").
+	varlon : str, optional
+		Name of the longitude variable in the custom data (default is "").
+	custom_date_file_name : str, optional
+		Name of the file containing the dates of the custom data (default is "").
+	tmpdir : str, optional
+		Directory where the temporary files are located (default is "./").
+
+	Returns
+	-------
+	Bhart : array_like
+		B parameter values for each cyclone center.
+
+	"""
 	if vtl_vtu_lr:
 		listlev1=[900,850,800,750,700,650,600]
 		listlev2=[600,550,500,450,400,350,300]
@@ -3893,6 +5932,55 @@ def get_gap_VTL_VTU(cenlats=np.array([None]),
 						tmpdir=""
 						):
 
+	"""
+	This function computes the VTL and VTU for a given gap of cyclone centers.
+
+	Parameters
+	----------
+	cenlats : numpy array
+		Latitudes of cyclone centers.
+	cenlons : numpy array
+		Longitudes of cyclone centers.
+	dates : numpy array
+		Dates of interest in "yyyymmdd" format.
+	hours : numpy array
+		Hours of interest in "hh" format.
+	idir_upper : str
+		Directory containing upper-level data files.
+	source_upperprefix : str
+		Prefix for upper-level data files.
+	source : str
+		Data source for upper-level data (e.g., "ERA5", "CUSTOM").
+	era_date_file_name : str
+		Name of the ERA5 date file.
+	search_limits : list
+		Geographic limits for data extraction [lat_min, lat_max, lon_min, lon_max].
+	search_region : str
+		Specific region for data extraction.
+	max_dist : int
+		Maximum distance in kilometers between cyclone center and data grid points.
+	vtl_vtu_lr : bool
+		Flag indicating use of lower resolution for VTL and VTU calculations.
+	custom_geopotential_var_name : str
+		Name of geopotential variable in custom data.
+	custom_upper_level_variable_name : str
+		Name of upper-level variable in custom data.
+	varlat : str
+		Name of latitude variable in custom data.
+	varlon : str
+		Name of longitude variable in custom data.
+	custom_date_file_name : str
+		Name of custom date file.
+	tmpdir : str
+		Directory for saving temporary files.
+
+	Returns
+	-------
+	VTU : numpy array
+		Vertical tilt of the upper levels.
+	VTL : numpy array
+		Vertical tilt of the lower levels.
+	"""
 	sourcelats,sourcelons, Zvar, source_levels, listlev1, listlev2 = get_CPS_data(dates=dates,
 				hours=hours,
 				idir_upper=idir_upper,
@@ -3930,6 +6018,30 @@ def get_gap_VTL_VTU(cenlats=np.array([None]),
 	return VTU, VTL
 	
 def plot_VTL(dates,hours, VTL_series, B_series,path="./", fname="900-600hPa_Thermal_wind,png", dpi=600):
+	"""
+	Plots the VTL versus B parameter, with filled areas indicating warm and cold core phases.
+
+	Parameters
+	----------
+	dates : list
+		List of dates in the format "yyyymmdd".
+	hours : list
+		List of hours in the format "hh".
+	VTL_series : numpy array
+		Array of VTL values.
+	B_series : numpy array
+		Array of B parameter values.
+	path : str
+		Directory for saving the plot.
+	fname : str
+		Name of the output file.
+	dpi : int
+		Resolution of the output plot.
+
+	Returns
+	-------
+	None
+	"""
 	fig = plt.figure(figsize=(18., 12.))
 	ax = fig.add_subplot(111)
 	ax.set_title(dates[0][0:13]+'-'+dates[-1][0:13],loc='right',fontsize=25)
@@ -3976,6 +6088,22 @@ def plot_VTL(dates,hours, VTL_series, B_series,path="./", fname="900-600hPa_Ther
 	
 	
 def plot_VTU(dates, hours, VTL_series, VTU_series, B_series, path="./", fname="900-600hPa_Thermal_wind,png", dpi=600):
+	"""
+	Plot a scatter plot of the upper level thermal wind ($-V_T^U$) versus the lower level thermal wind ($-V_T^L$) for a given cyclone track.
+
+	Parameters:
+	dates (list): List of dates for the given cyclone track.
+	hours (list): List of hours for the given cyclone track.
+	VTL_series (list): List of values for the lower level thermal wind ($-V_T^L$).
+	VTU_series (list): List of values for the upper level thermal wind ($-V_T^U$).
+	B_series (list): List of values for the B parameter.
+	path (str): Path to save the plot.
+	fname (str): Name of the plot file.
+	dpi (int): Resolution of the plot.
+
+	Returns:
+	None
+	"""
 	fig = plt.figure(figsize=(18., 12.))
 	ax = fig.add_subplot(111)
 	ax.set_title(dates[0][0:13]+'-'+dates[-1][0:13],loc='right',fontsize=25)
@@ -4056,6 +6184,68 @@ def paring_centers(cyclone_type="",
 	
 	
 	
+	"""
+	Pairing function for critical centers
+
+	This function takes a set of critical centers and pair them into cyclones. 
+	It uses the distance between the centers to determine whether they belong to the same cyclone or not.
+
+	Parameters
+	----------
+	cyclone_type : str
+		determines the type of cyclone to look for (e.g. tropical cyclone, extratropical cyclone, etc.)
+	dates : list of str
+		list of dates to process
+	hours : list of str
+		list of hours to process
+	dist_threshold : int
+		maximum distance between two critical centers to be considered part of the same cyclone
+	tmpdir : str
+		directory where the temporary files are stored
+	pathoutput : str
+		directory where the output files are stored
+	search_region : str
+		region to search for cyclones (e.g. NA for North Atlantic)
+	dt_h : int
+		time step between two consecutive critical centers
+	source : str
+		source of the data (e.g. ERA5, GFS, etc.)
+	dt_lifetime : int
+		minimum time a cyclone must live to be considered a cyclone
+	minimum_distance_travelled : int
+		minimum distance a cyclone must travel to be considered a cyclone
+	intensity_threshold : float
+		minimum intensity a cyclone must have to be considered a cyclone
+	checking_upper_levels_parameters : bool
+		whether to use upper levels parameters to determine the type of cyclone
+	idir_upper : str
+		directory where the upper levels parameters are stored
+	source_upperprefix : str
+		prefix of the upper levels parameters files
+	era_date_file_name : str
+		name of the file containing the ERA5 dates
+	search_limits : list of int
+		limits of the region to search for cyclones (e.g. [0, 360, -90, 90] for the whole globe)
+	max_dist : int
+		maximum distance between two critical centers to be considered part of the same cyclone
+	vtl_vtu_lr : bool
+		whether to use the Laplacian of the temperature at 500hPa to determine the type of cyclone
+	custom_geopotential_var_name : str
+		name of the geopotential variable in the custom data
+	custom_upper_level_variable_name : str
+		name of the upper level variable in the custom data
+	custom_varlat : str
+		name of the latitude variable in the custom data
+	custom_varlon : str
+		name of the longitude variable in the custom data
+	custom_date_file_name : str
+		name of the file containing the custom dates
+
+	Returns
+	-------
+	sys_id : int
+		number of cyclones found
+	"""
 	search_region=search_region[0:2]
 	sys_id=0
 	fwrite=open(pathoutput+"/"+program_name()+"_"+search_region+"_"+dates[0]+hours[0]+"-"+dates[-1]+hours[-1]+"_"+source+"_"+cyclone_type+".dat","w")
@@ -4455,6 +6645,45 @@ def paring_centers(cyclone_type="",
 
 
 def write_tracker(cyclone_type,nlats,nlons,npmin,nmws,nclosedp,nroci,nouter_r,nctype,VTU,VTL, Bhart, search_region,sys_id,fwrite,ndates, nhours):
+	"""
+	Write the cyclone tracking results to a file.
+
+	Parameters
+	----------
+	cyclone_type : str
+		Type of cyclone: EC (extratropical cyclones), TC (tropical cyclones), TLC (tropical-like cyclones), SC (subtropical cyclones), or MC (Mediterranean cyclones)
+	nlats : numpy array
+		latitudes of the cyclone centers
+	nlons : numpy array
+		longitudes of the cyclone centers
+	npmin : numpy array
+		minimum pressure of the cyclone
+	nmws : numpy array
+		maximum wind speed of the cyclone
+	nclosedp : numpy array
+		number of closed pressure contours
+	nroci : numpy array
+		number of outer closed isolines
+	nctype : numpy array
+		type of cyclone: -99999 for undefined, 0 for tropical cyclones, 1 for extratropical cyclones
+	VTU : numpy array
+		parameter VTU (see Bhart et al. 2021)
+	VTL : numpy array
+		parameter VTL (see Bhart et al. 2021)
+	Bhart : numpy array
+		parameter Bhart (see Bhart et al. 2021)
+	search_region : str
+		Region for the cyclone tracking: NA (North America), SA (South America), NP (North Pacific), SP (South Pacific), SI (South Indian Ocean), NH (Northern Hemisphere), SH (Southern Hemisphere), or GL (Global)
+	sys_id : int
+		system ID
+	fwrite : file object
+		file object for writing the tracking results
+	ndates : list of str
+		list of dates in the format YYYYMMDD
+	nhours : list of str
+		list of hours in the format HH
+
+	"""
 	sp="          "
 
 	nnctype=[]	
