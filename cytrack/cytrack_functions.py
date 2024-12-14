@@ -1415,9 +1415,106 @@ def get_cumstom_hgt_data(filename, varname):
 	return hgt
 
 
-
-
 def get_era5_3dvar(idir="./",
+		erafile="",
+		svariable="",
+		varlevel="level",
+		search_limits=[None,None,None,None],
+		search_region="",
+		fdate="",
+		full=False,
+		dims=False
+		):
+
+	#ncera=Dataset(idir+"/"+erafile)
+	import xarray as xr
+	ncera = xr.open_dataset(idir+"/"+erafile)
+
+	if varlevel=="level" and not varlevel in ncera.coords:
+		varlevel="pressure_level"
+
+	check_vars=[svariable, varlevel]
+	variablenot=False
+	for var in check_vars:
+		if not var in ncera.variables:
+			print("		-WARNING: Variable " + svariable + " in " + idir+"/"+erafile+ " is missing")
+			variablenot=True
+
+	if  variablenot:
+		print("		--------------------------------------------------------------------------------------")
+		print ("		Trying to download it from EAR5 reanalysis")
+		print("		--------------------------------------------------------------------------------------")
+		year=fdate[0:4].zfill(4)
+		month=fdate[4:6].zfill(2)
+		day=fdate[6:8].zfill(2)
+		hour=fdate[8:10].zfill(2)
+		download_era5_upper(erafile_upper=idir+"/"+erafile,year=year,month=month,day=day,hour=hour)
+
+	#ncerau=Dataset(idir+"/"+erafile)
+	ncerau = xr.open_dataset(idir+"/"+erafile)
+
+
+	eralat_=ncerau["latitude"].values
+	eralon=ncerau["longitude"].values
+	levels=ncerau[varlevel].values
+	evar=(ncerau[svariable].values)/9.80665
+	#ncera.close()
+
+	evar = evar.astype('float64')
+
+	lonn,latt=np.meshgrid(eralon,eralat_)
+
+
+	if len(evar.shape)>3:
+		evar=evar[0,:]
+	nevar=np.empty_like(evar)
+	nevar[:,:,:]=0
+	if search_region.upper() in ("NA","SA","AL","MS"):
+		for i in range(0,evar.shape[0]):
+			auxvar,nlon=convert_era5_matrix(evar[i,:],eralon,search_lon=180)
+			nevar[i,:]=auxvar
+	else:
+		nlon=np.copy(eralon)
+		nevar=np.copy(evar)
+
+	if search_region.upper() in ("NA","SA","AL","MS"):
+		for i in range(0,len(nlon)):
+			if nlon[i]>=180:
+				nlon[i]=nlon[i]-360
+
+
+	if len(nlon.shape):
+		nlon,eralat=np.meshgrid(nlon,eralat_)
+
+
+
+	nera_lat,nera_lon, sevar= era_subregion(lat=eralat,lon=nlon,var=nevar[0,:],search_limits=search_limits)
+
+	if dims:
+		num_levels=len(levels)
+		dimy= sevar.shape[0]
+		dimx=sevar.shape[1]
+
+		return num_levels, dimy, dimx
+
+	sub_evar=np.empty((len(levels),sevar.shape[0],sevar.shape[1]))
+	sub_evar[:,:,:]=0
+
+	for index in range(0,nevar.shape[0]):
+		nera_lat,nera_lon, svar_aux = era_subregion(lat=eralat,lon=nlon,var=nevar[index,:],search_limits=search_limits)
+		sub_evar[index,:]=svar_aux
+
+	if full:
+		return evar, latt, lonn, levels
+	else:
+
+
+		return sub_evar, nera_lat,nera_lon, levels
+
+
+
+
+def get_era5_3dvarV2(idir="./",
 		erafile="",
 		svariable="",
 		varlevel="level",
@@ -1429,9 +1526,10 @@ def get_era5_3dvar(idir="./",
 		):
 	
 	ncera=Dataset(idir+"/"+erafile)
+
+
 	if varlevel=="level" and not varlevel in ncera.variables.keys():
 		varlevel="pressure_level"
-
 
 	check_vars=[svariable, varlevel]
 	variablenot=False
@@ -1457,8 +1555,7 @@ def get_era5_3dvar(idir="./",
 	evar=ncerau.variables[svariable][:]/9.80665
 	ncera.close()
 	
-
-
+	evar = evar.astype('float64')
 	
 	lonn,latt=np.meshgrid(eralon,eralat_)
 	
@@ -1474,7 +1571,7 @@ def get_era5_3dvar(idir="./",
 	else:
 		nlon=np.copy(eralon)
 		nevar=np.copy(evar)
-		
+
 	if search_region.upper() in ("NA","SA","AL","MS"):
 		for i in range(0,len(nlon)):
 			if nlon[i]>=180:
@@ -1484,10 +1581,18 @@ def get_era5_3dvar(idir="./",
 	if len(nlon.shape):
 		nlon,eralat=np.meshgrid(nlon,eralat_)
 
+
+
 	nera_lat,nera_lon, sevar= era_subregion(lat=eralat,lon=nlon,var=nevar[0,:],search_limits=search_limits)
 
 	if dims:
-		return len(levels), sevar.shape[0],sevar.shape[1]
+		num_levels=len(levels)
+		dimy= sevar.shape[0]
+		dimx=sevar.shape[1]
+
+		print(type(num_levels), type(dimy), type(dimx))
+
+		return num_levels, dimy, dimx
 
 	sub_evar=np.empty((len(levels),sevar.shape[0],sevar.shape[1]))
 	sub_evar[:,:,:]=0
@@ -1600,6 +1705,7 @@ def era_subregion(lat=np.array(None),lon=np.array(None),var="",search_limits=[No
 	nlon=lon[l1&l2].reshape(r,c)
 	nlat=lat[l1&l2].reshape(r,c)
 	nvar=var[l1&l2].reshape(r,c)
+
 
 	return nlat,nlon,nvar
 
@@ -3590,6 +3696,7 @@ def get_CPS_data(dates=np.array([None]),
 
 		upperfiles=get_era5_files(dates=dates,hours=hours,era_file_prefix=source_upperprefix,era_date_file_name=era_date_file_name)
 
+
 		dimz, dimi,dimj=get_era5_3dvar(idir=idir_upper,
 							erafile=upperfiles[0],
 							svariable='z',
@@ -3602,9 +3709,12 @@ def get_CPS_data(dates=np.array([None]),
 							)
 
 
-		Zvar=np.empty((len(dates), dimz, dimi, dimj))
+		Zvar=np.zeros((len(dates), dimz, dimi, dimj))
+
+
 		for idx in range(0, len(dates)):
 			fdate=dates[idx]+hours[idx]
+
 			sourceZ, sourcelats,sourcelons, source_levels=get_era5_3dvar(idir=idir_upper,
 									erafile=upperfiles[idx],
 									svariable='z',
