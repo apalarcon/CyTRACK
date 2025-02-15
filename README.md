@@ -170,6 +170,15 @@ CyAL0132017, 63,
 20170918, 00,   14.25,  -58.00,  1001.37,  48.35,   409.628,   1011.21,   458.576,   SDWC,  39,   67, -2.0,
 ```
 
+```
+latc: degrees (-90 to 90)
+lonc: degrees (-180 to 180)
+Pc: hPa
+Vmax: km/h
+Size: km
+Proci: hPa
+ROCI: km
+```
 
 # Running CyTRACK
 
