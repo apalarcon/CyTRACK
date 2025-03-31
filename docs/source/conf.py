@@ -13,16 +13,16 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath('../lattin'))
+sys.path.insert(0, os.path.abspath('../cytracj'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'LATTIN'
+project = 'CyTRACK'
 copyright = '2025, Albenis Pérez-Alarcón'
 author = 'Albenis Pérez-Alarcón'
 
 # The full version, including alpha/beta/rc tags
-release = '1.0.4'
+release = '1.0.3'
 
 
 # -- General configuration ---------------------------------------------------

@@ -1,6 +1,6 @@
-.. LATTIN documentation 
+.. CyTRACK documentation 
 
-Welcome to LATTIN's documentation!
+Welcome to CyTRACK's documentation!
 =================================
 
 .. toctree::
