@@ -8,19 +8,19 @@ Steps
 
 1 - After install CyTRACK, you can manually run the testing example on your local PC by clonning the CyTRACK repository.
 
-.. code::bash
+.. code:: bash
 
     git clone https://github.com/apalarcon/CyTRACK.git
 
 2 - Go to CyTRACK/testing_CyTRACK directory
 
-.. code::bash
+.. code:: bash
 
     cd  CyTRACK/testing_CyTRACK
 
 3 - Create the directory data/ERA5_data
 
-.. code::bash
+.. code:: bash
 
     mkdir data/ERA5_data
 
@@ -29,7 +29,7 @@ Alternatively, CyTRACK will automatically download the required ERA5 input data.
 
 5 - Run the example case
 
-.. code::bash
+.. code:: bash
 
     mpirun -n 16 python run_CyTRACK.py -pf test_CyTRACK.cfg
 
@@ -40,7 +40,7 @@ Testing input file
 The `test_CyTRACK.cfg` input file is presented below. You can use it to run the example case.
 
 
-.. code::bash
+.. code:: bash
 
     #============================================================================================================
     #||                               +++++++           +++++++  +++++     +     +++++++                       ||
@@ -247,7 +247,7 @@ If CyTRACK runs successfully, the CyTRACK_output directory should be created. In
 
 The "plotting_test_CyTRACK_outputs.py" is presented below.
 
-.. code::python
+.. code:: python
 
     import numpy as np
     import matplotlib.pylab as plt
@@ -413,7 +413,7 @@ The "plotting_test_CyTRACK_outputs.py" is presented below.
     plt.savefig("CyTRACK_testing_tracks.png",bbox_inches="tight")
 
 
-.. code::python
+.. code:: python
 
     python plotting_test_CyTRACK_outputs.py
 
