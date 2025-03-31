@@ -61,7 +61,7 @@ Create a bash script (**run_cytrack.sh**). This example is valid for FINESTARRAE
 Input and help
 ----------------------
 
-You can also get the input file template and help by using the **run_cytrack.py** created above.
+You can also get the input file template and help by using the **run_cytrack.py** script created above.
 
 For input file template:
 
