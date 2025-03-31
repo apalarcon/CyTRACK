@@ -36,7 +36,7 @@ doi.org/10.1175/MWR3420.1.
 
 
 
- Paring cyclone centres in continuous time steps
+Paring cyclone centres in continuous time steps
 ---------------------------------------------
 
 - Storm centres are linked together if they reoccur in the next time step (**t=t0 + dt**) within a critical distance (**dist_threshold**) from the previous low-pressure centre detected at time t0.
