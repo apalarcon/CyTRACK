@@ -85,9 +85,9 @@ git clone https://github.com/apalarcon/CyTRACK.git
   ```
 2 - Verify you have installed all packages requiered for CyTRACK. If you use an Anaconda environment, please be sure you have activated the environment
 
-3 - Copy the cytrack directory to your Anaconda instalation
+3 - Copy the src/cytrack directory to your Anaconda instalation
 ```
-cp -r cytrack path_to_anaconda_installation/lib/python3.x/site-packages/
+cp -r src/cytrack path_to_anaconda_installation/lib/python3.x/site-packages/
 ````
 To knnow the exactly path of your Anaconda installation (```patho_to_anaconda_installation/.../site-packages/```), you can follow these instructions:
 
