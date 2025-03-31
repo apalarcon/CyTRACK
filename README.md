@@ -85,7 +85,7 @@ git clone https://github.com/apalarcon/CyTRACK.git
   ```
 2 - Verify you have installed all packages requiered for CyTRACK. If you use an Anaconda environment, please be sure you have activated the environment
 
-3 - Copy the src/cytrack directory to your Anaconda instalation
+3 - Copy the src/cytrack directory to your Anaconda installation
 ```
 cp -r src/cytrack path_to_anaconda_installation/lib/python3.x/site-packages/
 ````
@@ -107,7 +107,9 @@ git clone https://github.com/apalarcon/CyTRACK.git
 
 2 - Verify you have installed all packages requiered for CyTRACK. If you use an Anaconda environment, please be sure you have activated the environment.
 
-3 - run install_CyTRACK.sh.
+3 - Go to the src directory
+
+3 - run ```sh install_CyTRACK.sh```.
 
 ### NOTE
 If you have a problem with the mpi4py library, try these steps:
