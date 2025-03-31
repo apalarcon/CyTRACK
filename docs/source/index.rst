@@ -11,7 +11,7 @@ Welcome to CyTRACK's documentation!
    installation
    namelist
    usage
-   input_output
+   inputoutput
    support
    license
    citation

@@ -1,4 +1,4 @@
- Input/Output data
+ Input and Output data
 =================================
 
 
