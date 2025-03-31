@@ -245,7 +245,7 @@ If CyTRACK runs successfully, the CyTRACK_output directory should be created. In
 
 2 - To plot the cyclones tracks, run the `plotting_test_CyTRACK_outputs.py` script. As the North Atlantic is the target basin, this script removed for plotting cyclones that formed over the eastern Pacific Ocean.
 
-The "plotting_test_CyTRACK_outputs.py" is presented below.
+The `plotting_test_CyTRACK_outputs.py` is presented below.
 
 .. code:: python
 
