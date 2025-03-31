@@ -1,9 +1,9 @@
  Input and Output data
-=================================
+=======================
 
 
 Input Data
----------------------------------
+----------
 
 CyTRACK can read and directly process input data from ERA5 and WRF-ARW model by typying source="ERA5" or source= "WRF" in the input file. Note that ERA5 input data must be downloaded with longitudes in 0-360 format. For other case of ERA5 data or other sources, please set source="CUSTOM".
 
@@ -11,11 +11,11 @@ CyTRACK is configured for tracking tropical cyclones (TC), extratropical cyclone
 
 .. seealso::
 
-    Check CyTRACK help for more details
+    CyTRACK help for more details
 
 
 CyTRACK output
----------------------------------
+--------------
 
 It is a comma-delimited text format following a similar to the HURDAT2 dataset ( Landsea and Franklin (2013) ) suported by the U.S. National Hurricane Center (NHC)
 
