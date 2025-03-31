@@ -596,3 +596,12 @@ You can get the input file template with default values using the following comm
     cytrack.get_cytrack_inputs_template()
  
 
+Getting CyTRACK help on the input file
+--------------------------------
+
+To get the help of CyTRACK, you can use the following command:
+
+.. code-block:: python
+
+    import cytrack
+    cytrack.help() 
