@@ -7,7 +7,7 @@ import subprocess
 import sysconfig
 import sys
 
-with open("README.md", "r") as fh:
+with open("../README.md", "r") as fh:
     long_description = fh.read()
 
 with open("cytrack/VERSION", "r") as fh:
