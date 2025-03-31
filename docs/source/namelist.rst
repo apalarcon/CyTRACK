@@ -583,3 +583,16 @@ Tracking subtropical cyclones (SCs)
 
     #Mean sea level pressure anomaly threshold in hPa to consideded a grid point as candidate for system centre. Default mslp_anomaly_threshold=-2.5
     mslp_anomaly_threshold=-2.5
+
+
+Getting input file template
+---------------------------
+
+You can get the input file template with default values using the following command:
+
+.. code-block:: python
+
+    import cytrack
+    cytrack.get_cytrack_inputs_template()
+ 
+
