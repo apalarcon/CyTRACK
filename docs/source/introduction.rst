@@ -7,14 +7,7 @@ Overview
 
 CyTRACK is a new open-source, comprehensive and user-friendly Python toolbox for detecting and tracking cyclones in model and reanalysis datasets.
 
-
-.. image:: _static/LogoV1.png
-   :alt: CyTRACK logo
-   :align: center
-   :width: 400px
-
-
-CyTRACK detects and tracks cyclones also using the MSLP. Like most algorithmic Lagrangian trackers, the procedure for detecting cyclones is divided into two parts: (i) critical centres detection
+It detects and tracks cyclones also using the MSLP. Like most algorithmic Lagrangian trackers, the procedure for detecting cyclones is divided into two parts: (i) critical centres detection
 and (ii) pairing centres in continuous time steps. These procedures are described below.
 
 
