@@ -20,7 +20,7 @@ Welcome to the documentation of the CyTRACK code. CyTRACK can be used for tracki
 
 - To cite the code, use the software citation information for the appropriate version of the code
 
-- Visit the quickstart page for a high-level overview of how to use wam2layers.
+- Visit the run CyTRACK page for a high-level overview of how to use CyTRACK.
 
 - For more information on how to use, browse this documentation.
 
