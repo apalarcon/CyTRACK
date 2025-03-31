@@ -3,7 +3,7 @@
 Welcome to CyTRACK's documentation!
 =================================
 
-Welcome to the documentation of the CyTRACK code. CyTRACK can be used to tracking cyclones (e.g., tropical, extratropical, subtropical, tropical-like) in different basins of the world.
+Welcome to the documentation of the CyTRACK code. CyTRACK can be used for tracking cyclones (e.g., tropical, extratropical, subtropical, tropical-like) in different basins of the world.
 
 
 .. image:: _static/LogoV1.png
