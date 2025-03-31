@@ -11,7 +11,7 @@ To run CyTRACK, you need
 - `Git <https://git-scm.com/>`__ 
 - `Anaconda 3 <https://www.anaconda.com/>`__ 
 - `Linux <https://www.linux.org/>`__ 
-- `Fortran <https://fortran-lang.org/>`__ 
+
 
 
 The main Python packages that must be installed are the following:
@@ -43,6 +43,13 @@ Installation
 
     conda install -c tramo-ephyslab cytrack
 
+or
+
+.. code-block:: bash
+
+    conda install -c apa_py cytrack
+
+
 **2 - Second Method**
   
 You must check that all the packages are installed and that there is no error message when they are imported.
@@ -69,7 +76,7 @@ To knnow the exactly path of your Anaconda installation (patho_to_anaconda_insta
     from distutils.sysconfig import get_python_lib
     print(get_python_lib())
 
-**3 - Third Method **
+**3 - Third Method**
 
 - Clone CyTRACK repository.
 
