@@ -423,4 +423,4 @@ Resulting plot
 .. image:: _static/CyTRACK_testing_tracks.png
    :alt: CyTRACK output example
    :align: center
-   :width: 400px
+   :width: 700px
