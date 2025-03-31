@@ -20,8 +20,9 @@
 
 # CyTRACK: Cyclone Tracking framework
 
-![plot](./docs/source/_static/Logo_banner.png)
-
+<p align="center">
+  <img src="./docs/source/_static/Logo_banner.png" alt="plot">
+</p>
 
 CyTRACK is an open-source, comprehensive and user-friendly Python toolbox for detecting and tracking cyclones
 
