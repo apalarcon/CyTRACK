@@ -12,6 +12,7 @@ Welcome to CyTRACK's documentation!
    namelist
    usage
    inputoutput
+   example_case
    support
    license
    citation

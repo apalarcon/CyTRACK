@@ -5,7 +5,7 @@ It is a new open-source, comprehensive and user-friendly Python toolbox for dete
 
 
 .. image:: _static/LogoV1.png
-   :alt: Logo de LATTIN
+   :alt: CyTRACK logo
    :align: center
    :width: 400px
 
