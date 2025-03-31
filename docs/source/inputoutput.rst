@@ -1,7 +1,6 @@
  Input and Output data
 =======================
 
-
 Input Data
 ----------
 
@@ -12,7 +11,6 @@ CyTRACK is configured for tracking tropical cyclones (TC), extratropical cyclone
 .. seealso::
 
     CyTRACK help for more details
-
 
 CyTRACK output
 --------------
