@@ -170,7 +170,7 @@ Common parameters
     remove_tmp_dir="no"
 
 
-Specific threshold values fro tracking extratropical cyclones (ECs)
+Tracking tracking extratropical cyclones (ECs)
 -------------------------------------------------------------------
 
 .. code-block:: bash
@@ -253,7 +253,7 @@ Specific threshold values fro tracking extratropical cyclones (ECs)
     mslp_anomaly_threshold=-2.5
 
 
-Specific threshold values fro tracking tropical cyclones (TCs)
+Tracking tropical cyclones (TCs)
 -------------------------------------------------------------------
 
 .. code-block:: bash
@@ -335,7 +335,7 @@ Specific threshold values fro tracking tropical cyclones (TCs)
     mslp_anomaly_threshold=-2
 
 
-Specific threshold values fro tracking Mediterranean cyclones (MCs)
+Tracking Mediterranean cyclones (MCs)
 -------------------------------------------------------------------
 
 .. code-block:: bash
@@ -419,7 +419,7 @@ Specific threshold values fro tracking Mediterranean cyclones (MCs)
 
 
 
-Specific threshold values fro tracking tropical-like cyclones (TLCs)
+Trackingtropical-like cyclones (TLCs)
 -------------------------------------------------------------------
 
 .. code-block:: bash
@@ -501,7 +501,7 @@ Specific threshold values fro tracking tropical-like cyclones (TLCs)
     mslp_anomaly_threshold=-2.5
 
 
-Specific threshold values fro tracking subtropical cyclones (SCs)
+Tracking subtropical cyclones (SCs)
 -------------------------------------------------------------------
 
 .. code-block:: bash
