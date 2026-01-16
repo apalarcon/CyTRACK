@@ -7,7 +7,6 @@ from scipy.interpolate import griddata
 from sklearn.linear_model import LinearRegression
 from scipy import interpolate
 from numpy.core.numeric import normalize_axis_index
-import imp
 import argparse
 import xarray as xr
 import time

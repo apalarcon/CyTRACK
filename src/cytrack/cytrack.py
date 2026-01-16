@@ -12,6 +12,7 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 from mpi4py import MPI
 import time
 import functools
+import importlib as imp
 print = functools.partial(print, flush=True)
 
 comm = MPI.COMM_WORLD
@@ -49,7 +50,9 @@ def get_cytrack_main(pathfile=""):
 		print("\n")
 		print("Using parameters from: " + pathfile)
 		print("============================================================================================================\n")
-	content = imp.load_source("", pathfile) 
+	#content = imp.load_source("", pathfile) 
+	loader = imp.machinery.SourceFileLoader("", pathfile)
+	content = loader.load_module()
 	verbose = check_paths(content, "verbose")
 	cyclone_type = check_paths(content, "cyclone_type")
 	source = check_paths(content, "source")
