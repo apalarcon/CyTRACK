@@ -2394,11 +2394,12 @@ def get_custom_3dvar(idir="./",
 	levels : numpy array
 		Array with the pressure levels of the subregion.
 	"""
-	nc=Dataset(idir+"/"+customfile)
+	ncerau=Dataset(idir+"/"+customfile)
+
 	check_vars=[svariable, varlevel]
 	variablenot=False
 	for var in check_vars:
-		if not var in nc.variables.keys():
+		if not var in ncerau.variables.keys():
 			print("		-WARNING: Variable " + svariable + " in " + idir+"/"+customfile+ " is missing")
 			variablenot=True
 	
@@ -2408,7 +2409,7 @@ def get_custom_3dvar(idir="./",
 	levels=ncerau.variables[varlevel][:]
 	
 	evar=ncerau.variables[svariable][:]/9.80665
-	nc.close()
+	ncerau.close()
 	
 
 	if len(eralat_.shape)<2:
