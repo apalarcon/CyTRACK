@@ -6,6 +6,11 @@ Releases
 
 GitHub:  https://github.com/apalarcon/CyTRACK
 
+v.1.0.4 (2026-01-16)
+~~~~~~~~~~~~~~~~~~~~
+
+- This version fix a bug when reads custom input data in NetCDF format.
+
 
 v.1.0.3 (2024-10-15)
 ~~~~~~~~~~~~~~~~~~~~

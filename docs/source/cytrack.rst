@@ -1,7 +1,7 @@
 API reference
 =====================
 
-CyTRACK 1.0.3 
+CyTRACK 1.0.4
 --------------
 
 .. module:: cytrack
@@ -9,7 +9,7 @@ CyTRACK 1.0.3
    :platform: Linux
    :synopsis: CyTRACK
    :moduleauthor: Albenis Pérez-Alarcón <albenis.perez.alarcon@uvigo.es>
-   :version: 1.0.3
+   :version: 1.0.4
    :deprecated: No
    :private: No
 
