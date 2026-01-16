@@ -2403,7 +2403,7 @@ def get_custom_3dvar(idir="./",
 			print("		-WARNING: Variable " + svariable + " in " + idir+"/"+customfile+ " is missing")
 			variablenot=True
 	
-	ncerau=Dataset(idir+"/"+customfile)
+	
 	eralat_=ncerau.variables[varlat][:]
 	eralon=ncerau.variables[varlon][:]
 	levels=ncerau.variables[varlevel][:]
