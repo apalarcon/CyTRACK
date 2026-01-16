@@ -1982,44 +1982,31 @@ def get_custom_2dvar(idir="./",
 		custom_longitude_var="longitude"):
 	
 	
-	"""
-	Reads a custom 2D variable from a netCDF file and returns a numpy array
-	with the data. The function also applies a subregion of the data based
-	on the search_limits and search_region arguments.
-
-	Parameters
-	----------
-	idir : str
-		Directory where the custom netCDF file is located.
-	customfile : str
-		Name of the custom netCDF file.
-	svariables : list of str
-		List of variables to be read from the netCDF file.
-	search_limits : list of float
-		Search limits for subregion (lonmin,lonmax,latmin,latmax).
-	search_region : str
-		Region for subregion (e.g. "NA" for North Atlantic).
-	custom_latitude_var : str
-		Name of the latitude variable in the custom netCDF file.
-	custom_longitude_var : str
-		Name of the longitude variable in the custom netCDF file.
-
-	Returns
-	-------
-	varlist : numpy array
-		Array with the variables read from the netCDF file.
-	"""
 	nc=Dataset(idir+"/"+customfile)
 	customlat=nc.variables[custom_latitude_var][:]
 	customlon=nc.variables[custom_longitude_var][:]
 
 
+	# for var in svariables:
+	# 	print(var)
+	# 	vars()[var]=nc.variables[var][:]
+ #
+	# 	print(vars()[var])
+ #
+	# 	if len(vars()[var].shape)>2:
+	# 		vars()[var]=vars()[var][0,:]
+	
+	data = {}
+
 	for var in svariables:
-		vars()[var]=nc.variables[var][:]
-		if len(vars()[var].shape)>2:
-			vars()[var]=vars()[var][0,:]
-	
-	
+		#print(f"Processing: {var}")
+
+		# Store the data in the dictionary instead of vars()
+		data[var] = nc.variables[var][:]
+
+		# Handle dimensions (e.g., removing 'expver' dimension if it exists)
+		if len(data[var].shape) > 2:
+			data[var] = data[var][0, :]
 	#if len(customlon.shape)>1:
 		#checklon=customlon[0,:]
 	#else:
@@ -2052,7 +2039,7 @@ def get_custom_2dvar(idir="./",
 	varlist[1,:]=nlon
 	nc.close()	
 	for i in range(0,len(svariables)):
-		varlist[i+2,:]=vars()[svariables[i]]
+		varlist[i+2,:]= data[svariables[i]] #vars()[svariables[i]]
 	return varlist 
 
 
