@@ -2449,16 +2449,16 @@ def get_era5_hgtfile():
 	return hgt_file
 
 
-def convert_era5_matrix(matrix,lon,search_lon):
-		
+def convert_era5_matrix_old(matrix,lon,search_lon):
+
 	"""
 	Shifts the columns of a matrix to the left so that the value at index 'search_lon' is located at the beginning of the matrix.
-	
+
 	Parameters:
 		matrix (numpy array): The matrix to be shifted.
 		lon (numpy array): The longitude array associated with the matrix.
 		search_lon (float): The value to be located at the beginning of the matrix.
-	
+
 	Returns:
 		tuple: A tuple containing the shifted matrix and the associated longitude array.
 	"""
@@ -2471,6 +2471,43 @@ def convert_era5_matrix(matrix,lon,search_lon):
 	lon_aux[:index]=lon[index:]
 	lon_aux[index:]=lon[:index]
 	return aux_matrix,lon_aux
+
+def convert_era5_matrix_roll(matrix, lon, search_lon=180):
+    """
+    Shifts the matrix and longitude array so that search_lon is at the start,
+    then normalizes longitudes to the -180 to 180 range.
+    """
+    # 1. Safely find the closest index to 180 (avoids float precision errors)
+    index = np.argmin(np.abs(lon - search_lon))
+
+    # 2. Use np.roll to shift everything to the left by 'index' positions
+    # axis=1 matches your original matrix[:, index:] structure
+    aux_matrix = np.roll(matrix, shift=-index, axis=1)
+    lon_aux = np.roll(lon, shift=-index)
+
+    # 3. Standardize the shifted longitudes to the -180 to 180 range
+    lon_aux = (lon_aux + 180) % 360 - 180
+
+    return aux_matrix, lon_aux
+
+
+
+def convert_era5_matrix(matrix, lon, search_lon):
+    """
+    Converts ERA5 matrix and longitude from 0-360 range to -180 to 180 range.
+    Assumes longitude is the second dimension (axis 1) of the matrix.
+    """
+    # 1. Convert longitudes using modulo math
+    lon_adjusted = (lon + 180) % 360 - 180
+
+    # 2. Get the sorting indices to arrange from -180 to 180
+    sort_idx = np.argsort(lon_adjusted)
+
+    # 3. Reorder both the longitude array and the matrix columns
+    lon_aux = lon_adjusted[sort_idx]
+    aux_matrix = matrix[:, sort_idx]  # Adjust to matrix[:, :, sort_idx] if 3D
+
+    return aux_matrix, lon_aux
 
 
 def era_subregion(lat=np.array(None),lon=np.array(None),var="",search_limits=[None,None,None,None]):
