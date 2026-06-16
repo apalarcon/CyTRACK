@@ -5018,7 +5018,7 @@ def compute_TC_size(latc=None,
 
 
 
-def compute_roci_RU(latc=None,
+def compute_roci_RU_old(latc=None,
 		lonc=None,
 		lats=np.array(None),
 		lons=np.array(None),
@@ -5143,12 +5143,19 @@ def compute_roci_RU(latc=None,
 				radius_closedp=finterpolate(contour_p)
 				radius_i=np.append(radius_i,radius_closedp)
 			
-			dp=np.abs(leg-closedp)
-			ind=np.where(dp==dp.min())
-			if len(ind[0])>1:
-				ind=int(ind[0][-1])
-			else:
-				ind=int(ind[0])
+			#dp=np.abs(leg-closedp)
+			#ind=np.where(dp==dp.min())
+			#if len(ind[0])>1:
+			#	ind=int(ind[0][-1])
+			#else:
+			#	ind=int(ind[0])
+			dp = np.abs(leg - closedp)
+			ind_array = np.where(dp == dp.min())[0]
+
+			# Getting the last element [-1] cleanly handles both cases:
+			# If length is >1, it gets the last index.
+			# If length is 1, it gets the only index.
+			ind = int(ind_array[-1])
 			critical_lat=np.append(critical_lat,latp[i,ind])
 			critical_lon=np.append(critical_lon,lonp[i,ind])
 
@@ -5165,6 +5172,181 @@ def compute_roci_RU(latc=None,
 		roci=0
 		closedp=0
 	
+	return roci, closedp
+
+
+def compute_roci_RU(latc=None,
+		lonc=None,
+		lats=None,
+		lons=None,
+		mslp=None,
+		pmin=None,
+		dang=10,
+		dradius=100,
+		search_radius=2000,
+		model_res=20):
+
+	"""
+	Compute the radius of the outermost closed isobar (ROCI) for a cyclone.
+	Parameters
+	----------
+
+	latc : float
+		Latitude of the cyclone center.
+	lonc : float
+		Longitude of the cyclone center.
+	lats : numpy array
+		Array of latitudes of the grid points.
+	lons : numpy array
+		Array of longitudes of the grid points.
+	mslp : numpy array
+		Array of mean sea level pressure values.
+	pmin : float
+		Minimum mean sea level pressure value.
+	dang : int
+		Angular distance between two consecutive points in the circular ring.
+	dradius : int
+		Radial distance between two consecutive points in the circular ring.
+	search_radius : int
+		Radius of the circular ring to search for the minimum mean sea level pressure value.
+	model_res : int
+		Resolution of the model.
+
+	Returns
+	-------
+
+	roci : float
+		Radius of the outermost closed isobar.
+	closedp : float
+		Pressure value of the outermost closed isobar.
+	"""
+	# Safe defaults check
+	if any(v is None for v in [lats, lons, mslp, pmin, latc, lonc]):
+		return 0,0
+
+	outerp = 900.0
+	outerp_found = False
+
+	while outerp < pmin:
+		if search_radius >= 1.5 * dradius:
+			# Assuming polar_cords is defined elsewhere in your module
+			latp, lonp, radius, theta = polar_cords(
+				latc=latc,
+				lonc=lonc,
+				dth=math.radians(dang),
+				dr=dradius,
+				search_radius=search_radius
+			)
+
+			pointint = np.column_stack((lonp.flatten(), latp.flatten()))
+			pointdata = np.column_stack((lons.flatten(), lats.flatten()))
+
+			# griddata can sometimes return NaNs if out of bounds, keep an eye on your data grid
+			pminp = griddata(pointdata, mslp.flatten(), pointint, method='nearest')
+			pminp = pminp.reshape(latp.shape[0], latp.shape[1])
+
+			outsp = []
+			for i in range(pminp.shape[0]):
+				leg = pminp[i, :]
+				if len(leg) > 2:
+					outsp.append(leg[-1])
+					outerp_found = True
+
+			# Safety check: Prevent ValueError if outsp is empty
+			if not outsp:
+				outerp_found = False
+				break
+
+			outerp = np.min(outsp)
+			search_radius -= dradius
+		else:
+			outerp_found = False
+			break
+
+	if outerp > pmin and outerp_found:
+		nradius, ntheta = np.meshgrid(radius, theta)
+
+		critical_rad = []
+		critical_p = []
+		bint = 1 if model_res > 50 else 3
+
+		for i in range(1, nradius.shape[0]):
+			leg = pminp[i, :]
+			legdr = nradius[i, :]
+			check = False
+
+			for j in range(bint, len(leg) - 1):
+				if 0 <= (leg[j] - leg[j-1]) <= 0.00001 and not check:
+					critical_rad.append(legdr[j])
+					critical_p.append(leg[j])
+					check = True
+
+			if not check:
+				critical_rad.append(legdr[-1])
+				critical_p.append(leg[-1])
+
+		# Safety check: Ensure critical_p is not empty before finding minimum
+		if not critical_p:
+			return 0, 0
+
+		closedp = np.min(critical_p)
+
+		radius_i = []
+		critical_lat = []
+		critical_lon = []
+
+		for i in range(nradius.shape[0]):
+			leg = pminp[i, :]
+			legdr = nradius[i, :]
+
+			if len(leg) == 0:
+				continue
+
+			if closedp < np.min(leg):
+				contour_p = np.min(leg)
+			elif closedp > np.max(leg):
+				contour_p = np.max(leg)
+			else:
+				contour_p = closedp
+
+			if len(leg) < 2:
+				return np.nan, np.nan
+
+			finterpolate = interpolate.interp1d(leg, legdr, assume_sorted=False)
+			radius_closedp = finterpolate(contour_p)
+			radius_i.append(radius_closedp)
+
+			dp = np.abs(leg - closedp)
+			ind_array = np.where(dp == dp.min())[0]
+
+			# Safety check: Ensure ind_array has elements
+			if ind_array.size > 0:
+				ind = int(ind_array[-1])
+				critical_lat.append(latp[i, ind])
+				critical_lon.append(lonp[i, ind])
+
+		SmArea = []
+		for i in range(1, len(critical_rad)):
+			# Assuming calc_area is defined elsewhere in your module
+			area_val = calc_area(radius_i[i-1], radius_i[i], theta[i] - theta[i-1])
+			SmArea.append(area_val)
+
+		sumaArea = np.sum(SmArea)
+
+		# Safety check: prevent negative square roots just in case area math flips
+		if sumaArea < 0:
+			roci = 0
+		else:
+			roci = np.sqrt(sumaArea / np.pi)
+
+	else:
+		roci = 0
+		closedp = 0
+
+	if closedp < pmin:
+		roci = 0
+		closedp = 0
+
 	return roci, closedp
 
 
