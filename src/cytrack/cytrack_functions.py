@@ -3541,8 +3541,10 @@ def filter_centers(lats=np.array(None),
 			dist=np.array(dist)
 			if len(dist)>0 and dist_check==True:
 
-				indices=np.where(dist<filter_center_threshold)
-				if len(indices[0])==0 or len(indices[0])==1:
+				# Extract the array immediately to avoid [0] lookups later
+				indices_array = np.where(dist<filter_center_threshold)[0]
+				
+				if len(indices_array)==0 or len(indices_array)==1:
 					flats=np.append(flats, lats[i])
 					flons=np.append(flons,lons[i])
 					froci=np.append(froci, roci[i])
@@ -3550,33 +3552,41 @@ def filter_centers(lats=np.array(None),
 					fclosedp=np.append(fclosedp,closedp[i])
 					fmws=np.append(fmws,ff[i])
 					fouter_r=np.append(fouter_r,outer_r[i])
-					
 
-				elif len(indices[0])>1:
-					indices=indices[0]
+				elif len(indices_array)>1:
 					check_pmin=pmin[i]
 					check_indices=i
-					for m in range(0,len(indices)):
-						check_pmin=np.append(check_pmin,npmin[int(indices[m])])
-						check_indices=np.append(check_indices,coord_indices[int(indices[m])])
-					check_pmin=np.array(check_pmin)
-					i_npmin=np.where(check_pmin==check_pmin.min())
-					pindex=int(i_npmin[0][0])
-					flats=np.append(flats, lats[int(check_indices[pindex])])
-					flons=np.append(flons, lons[int(check_indices[pindex])])
-					froci=np.append(froci, roci[int(check_indices[pindex])])
-					fpmin=np.append(fpmin, pmin[int(check_indices[pindex])])
-					fclosedp=np.append(fclosedp,closedp[int(check_indices[pindex])])
-					fmws=np.append(fmws,ff[int(check_indices[pindex])])
-					fouter_r=np.append(fouter_r,outer_r[int(check_indices[pindex])])
 					
-					pmin[int(check_indices[pindex])]=np.nan
-					lats[int(check_indices[pindex])]=np.nan
-					lons[int(check_indices[pindex])]=np.nan
-					for k in range(0,len(indices)):
-						pmin[int(coord_indices[int(indices[k])])] = np.nan
-						lats[int(coord_indices[int(indices[k])])] = np.nan
-						lons[int(coord_indices[int(indices[k])])] = np.nan
+					for m in range(0,len(indices_array)):
+						check_pmin=np.append(check_pmin,npmin[int(indices_array[m])])
+						check_indices=np.append(check_indices,coord_indices[int(indices_array[m])])
+					
+					check_pmin=np.array(check_pmin)
+					
+					# SAFE FIX: argmin() returns the integer index directly. 
+					# No need for np.where() or complex array extraction.
+					pindex = int(check_pmin.argmin())
+					
+					# Assign to a variable so we don't recalculate it 10 times
+					best_idx = int(check_indices[pindex])
+					
+					flats=np.append(flats, lats[best_idx])
+					flons=np.append(flons, lons[best_idx])
+					froci=np.append(froci, roci[best_idx])
+					fpmin=np.append(fpmin, pmin[best_idx])
+					fclosedp=np.append(fclosedp,closedp[best_idx])
+					fmws=np.append(fmws,ff[best_idx])
+					fouter_r=np.append(fouter_r,outer_r[best_idx])
+					
+					pmin[best_idx]=np.nan
+					lats[best_idx]=np.nan
+					lons[best_idx]=np.nan
+					
+					for k in range(0,len(indices_array)):
+						nan_idx = int(coord_indices[int(indices_array[k])])
+						pmin[nan_idx] = np.nan
+						lats[nan_idx] = np.nan
+						lons[nan_idx] = np.nan
 			pmin[i]=np.nan
 			lats[i]=np.nan
 			lons[i]=np.nan
@@ -4777,9 +4787,14 @@ def compute_dmslp(latc=None,
 		npminp=np.copy(pminp)
 		npminp[nradius>filter_center_threshold]=10000
 
-		ii,jj=np.where(npminp==npminp.min())
-		ii=int(ii[0])
-		jj=int(jj[0])
+		#ii,jj=np.where(npminp==npminp.min())
+		#ii=int(ii[0])
+		#jj=int(jj[0])
+		flat_idx = npminp.argmin()
+		ii, jj = np.unravel_index(flat_idx, npminp.shape)
+
+		# Convert to standard Python integers if required downstream
+		ii, jj = int(ii), int(jj)
 		npmin=npminp[ii,jj]
 		nlatc=latp[ii,jj]
 		nlonc=lonp[ii,jj]
@@ -4980,32 +4995,32 @@ def compute_TC_size(latc=None,
 
 
 	radial_i=[]
-	for i in range(0,nradius.shape[0]):
-		leg=va[i,:]
+	for i in range(0, nradius.shape[0]):
+		leg = va[i, :]
 		
-		
-		imax=np.where(leg==leg.max())
-		imax=int(imax[0][0])
-	
-		nav=leg[imax:]
-		radii=nradius[i,imax:]
-	
-		if nav.min()<=outer_wind_speed_threshold<=nav.max():
+		# SAFE FIX 1: argmax() completely bypasses the tuple/array crash
+		imax = int(leg.argmax())
+
+		nav = leg[imax:]
+		radii = nradius[i, imax:]
+
+		if nav.min() <= outer_wind_speed_threshold <= nav.max():
 			try:
 				finterpolate = interpolate.interp1d(nav, radii)
-				radius_out=finterpolate(outer_wind_speed_threshold)
-				radial_i=np.append(radial_i,radius_out) 
+				radius_out = finterpolate(outer_wind_speed_threshold)
+				radial_i = np.append(radial_i, radius_out)
 			except:
 				pass
-		elif nav[-1]>outer_wind_speed_threshold:
-			radial_i=np.append(radial_i,radii[-1])
+				
+		elif nav[-1] > outer_wind_speed_threshold:
+			radial_i = np.append(radial_i, radii[-1])
 
 		else:
-			ii=np.where(nav<=outer_wind_speed_threshold)
+			# SAFE FIX 2: Extract the array immediately and reference it cleanly
+			ii_array = np.where(nav <= outer_wind_speed_threshold)[0]
 
-			if len(ii[0])>=1:
-		
-				radial_i=np.append(radial_i,radii[int(ii[0][0])])
+			if len(ii_array) >= 1:
+				radial_i = np.append(radial_i, radii[int(ii_array[0])])
 		
 	outer_size= np.mean(radial_i)
 	
