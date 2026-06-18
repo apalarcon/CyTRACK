@@ -5668,10 +5668,12 @@ def compute_VT_series(dates=np.array([None]),
 			deltaZ2.append(int(delta_z2))
 
 		coef1b=(deltaZ1[-1]-deltaZ1[0])/(lnP1[-1]-lnP1[0])
-		VTL_seriesb.append(int(coef1b))
+		#VTL_seriesb.append(int(coef1b))
+		VTL_seriesb.append(int(np.asarray(coef1b).item()))
 
 		coef2b=(deltaZ2[-1]-deltaZ2[0])/(lnP2[-1]-lnP2[0])
-		VTU_seriesb.append(int(coef2b))
+		#VTU_seriesb.append(int(coef2b))
+		VTU_seriesb.append(int(np.asarray(coef2b).item()))
 		
 		X1 = np.reshape(lnP1, (len(lnP1), 1))
 		y1 =  deltaZ1
@@ -5680,7 +5682,8 @@ def compute_VT_series(dates=np.array([None]),
 		yhat1 = model.predict(X1)
 		reg = LinearRegression().fit(X1, y1)
 		coef1=reg.coef_
-		VTL_series.append(int(coef1))
+		#VTL_series.append(int(coef1))
+		VTL_series.append(int(np.asarray(coef1).item()))
 		
 		
 		X2 = np.reshape(lnP2, (len(lnP2), 1))
@@ -5690,7 +5693,8 @@ def compute_VT_series(dates=np.array([None]),
 		yhat2 = model.predict(X2)
 		reg = LinearRegression().fit(X2, y2)
 		coef2=reg.coef_
-		VTU_series.append(int(coef2))
+		#VTU_series.append(int(coef2))
+		VTU_series.append(int(np.asarray(coef2).item()))
 
 	if vtl_vtu_lr:
 		return VTL_series, VTU_series
