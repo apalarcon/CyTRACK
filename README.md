@@ -60,22 +60,24 @@ or
 ## The packages required to run CyTRACK are:
   
 ```
-- netCDF4
-- numpy 
-- scipy 
-- mpi4py
 - time
 - datetime
 - functools
 - math 
 - sys
 - os
-- matplotlib
-- imp
-- xarray
-- sklearn
 - argparse
+- importlib
+- netcdf4=1.7.2
+- numpy=1.26.4
+- scipy=1.12.0
+- mpi4py=3.1.4
+- matplotlib=3.10.3
+- xarray=2023.6.0
+- sklearn=1.6.1
 ```
+
+
 # Installation
 
 ### First Method
