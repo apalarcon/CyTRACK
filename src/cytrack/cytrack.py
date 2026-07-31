@@ -202,7 +202,7 @@ def get_cytrack_main(pathfile=""):
 		calendar=calendar
 		)
 
-	i_bg=get_i_bg(prev_days)
+	i_bg=get_i_bg(prev_days,dt_h)
 	
 	#print(dates)
 	#dates=dates[i_bg:]

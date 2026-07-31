@@ -1773,7 +1773,7 @@ def get_wrf_hgt(idir="",wrffile=""):
 	return lat,lon,hgt
 
 
-def get_i_bg(prev_days):
+def get_i_bg(prev_days,dt_h):
 	"""
 	Calculate the index (i_bg) based on the number of previous days.
 
@@ -1785,10 +1785,13 @@ def get_i_bg(prev_days):
 	Returns
 	-------
 	int
-		The index (i_bg), calculated as 4 times the number of previous days if positive, otherwise 0.
+		The index (i_bg), calculated as 24/dt_h times the number of previous days if positive, otherwise 0.
+	dt_h : int
+		The time step in hours.
+		
 	"""
 	if prev_days>0:
-		i_bg=int(prev_days)*4
+		i_bg=int(prev_days*(24/int(dt_h)))
 	else:
 		i_bg=0
 	return i_bg			
