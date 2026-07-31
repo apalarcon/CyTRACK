@@ -28,7 +28,7 @@ CyTRACK is an open-source, comprehensive and user-friendly Python toolbox for de
 
 [![License: GPLv3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
- [![Current Version: ](https://img.shields.io/badge/Current_Version-1.0.4-blue)](https://anaconda.org/tramo-ephyslab/cytrack)
+ [![Current Published Version: ](https://img.shields.io/badge/Current_Version-1.0.4-blue)](https://anaconda.org/tramo-ephyslab/cytrack)
 
 If you use CyTRACK, please cite it as follows:
 
@@ -36,7 +36,13 @@ If you use CyTRACK, please cite it as follows:
 Pérez-Alarcón, A.; Coll-Hidalgo, P.; Trigo, R.M.; Nieto, R.; Gimeno, L. (2024). CyTRACK: An open-source and user-friendly python toolbox for detecting and tracking cyclones. Environmental Modelling & Software, 176, 106027. https://doi.org/10.1016/j.envsoft.2024.106027.
 
 
+
+
 ## Version History
+Latest Fixes in the `dev` branch
+- Fixed a bug in matrix flipping when using default ERA5 data.
+- Fixed a bug in date generation when `dt_h` is not equal to 6 hours.
+
 
 [![Version: ](https://img.shields.io/badge/Version-1.0.4-blue)](https://anaconda.org/tramo-ephyslab/cytrack) fixes a bug when CyTRACK reads custom input data in NetCDF format.
 
